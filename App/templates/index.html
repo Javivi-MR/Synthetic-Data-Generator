@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Synthetic data generator</title>
+{% endblock %}
+
+{% block body %}
+<header style="position: sticky; top: 0; z-index: 1;">
+    <nav class="navbar navbar-light bg-light" >
+        <a class="navbar-brand" id="title" href="/">
+            <img src="../static/images/logouca.png" alt="Logo herramienta uca" width="50" height="50" class="d-inline-block align-top">
+            <div id="title_char">Synthetic Data Generator</div>
+        </a>
+        <!-- 3 options at right of the nav bar -->
+        <div class="form-inline">
+            <a href="/" class="btn btn-outline-success apartado" style="font-size: 1.4em">Home</a>
+            {% if user.is_authenticated: %}
+                <a href="/logout" class="btn btn-outline-success apartado" style="font-size: 1.4em">Logout</a>
+            {% else: %}
+                <a href="/login" class="btn btn-outline-success apartado" style="font-size: 1.4em">Login</a>
+            {% endif %}
+            <a href="/generate" class="btn btn-outline-success apartado" style="font-size: 1.4em">Generate</a>
+            <a href="/about" class="btn btn-outline-success apartado" style="font-size: 1.4em">About</a>
+        </div>
+    </nav>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="bg-image">
+            <img src="../static/images/main.png" class="img-fluid imagen" alt="Responsive image">
+            <div class="mask" style="background-color: rgba(0, 0, 0, 0.6); display: flex">
+                <div >
+                    <h1 class="imagetxt ">Welcome to the Synthetic Data Generator</h1>
+                </div>
+                <div>
+                    <p class="imagetxt">The synthetic data retains the structure of the original data but is not the same</p>
+                </div>
+                <div>
+                    <a href="/generate" class="imagetxt" style="font-size: 1.4em; margin-top: 30px;">Generate synthetic data</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row FAQ">
+        <div class="col-12">
+            <h1 class="text-center" style="margin-top: 1.2em; margin-bottom: 1.2em;">Frequently Asked Questions</h1>
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            What is synthetic data?
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Synthetic data is a type of artificially generated data, made by stadistic and machine learning algorithms. It's principally used for solving database-privacy problems when there is a need on training models with data that is private or sensitive.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Why use synthetic data?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Sometimes, using real data is not possible due to its expensive collect process or when that data is private or sensitive. Synthetic data can fix these problems genereting data that does not belong to anyone and can be used to create more diverse and balanced datasets.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            How synthetic data is generated?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Synthetic data is generated using stadistic and machine learning algorithms. These algorithms are trained with real data and then they generate new data that retains the structure of the original data but is not the same.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            What can I do with Synthetic Data Generator?
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            With Synthetic Data Generator you can generate synthetic data from your own data. You can upload your data using a <a href="https://es.wikipedia.org/wiki/Valores_separados_por_comas" style="color:#198754;">csv</a> format, select the columns you want to generate synthetic data from and select the synthesizer (the algorithm) that you want to use. Then, you can download the synthetic data generated.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFive">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            How can I use Synthetic Data Generator?
+                        </button>
+                    </h2>
+                    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            First, you need to register and login. Then, go to the generate section and follow the instructions.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingSix">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                            What technologies are used in Synthetic Data Generator?
+                        </button>
+                    </h2>
+                    <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Synthetic Data Generator is a web application made with <a href="https://flask.palletsprojects.com/en/3.0.x/" style="color:#198754;">Flask</a> (a Python web framework) and <a href="https://getbootstrap.com/" style="color:#198754;">Bootstrap</a> (a CSS framework). The synthetic data is generated using <a href="https://docs.sdv.dev/sdv" style="color:#198754;">SDV</a> (Synthetic Data Vault), a Python library that provides a set of tools to generate synthetic data.
+                        </div>
+                    </div>
+                </div>
+                <!-- Add more accordion items as needed -->
+            </div>
+        </div>
+    </div>
+    <!-- make one row more but only one header that says tha if you want to know more about the project go to the about section -->
+    <div class="row">
+        <div class="col-12">
+            <p class="text-center" style="font-size: 1.2em">If you want to know more about the project, you can go to the <a href="./about" style="color:#198754;">about</a> section</p>
+        </div>
+    </div>
+</div>
+<footer>
+    <div class="footer">
+        <nav class="navbar navbar-light bg-light" style="justify-content: center;">
+            <div class="navbar-brand" style="display: flex; align-items: center; gap: 20px;">
+                <img src="../static/images/logouca.png" alt="Logo herramienta uca" width="50" height="50" class="d-inline-block align-top">
+                <div id="">Synthetic Data Generator</div>
+                <p style="display: contents;">© 2024</p>
+            </div>
+        </nav>
+    </div>
+</footer>
+{% endblock %}

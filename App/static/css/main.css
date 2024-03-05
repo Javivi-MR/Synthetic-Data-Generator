@@ -1,0 +1,108 @@
+body, html {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: whitesmoke;
+}
+
+.content, .resultados {
+    margin-left: 3em;
+    margin-right: 3em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+table, td, th {
+    border: 1px solid #aaa;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+    height: 30px;
+}
+
+td {
+    text-align: center;
+    padding: 5px;
+}
+
+.form {
+    margin-top: 20px;
+}
+
+#content {
+    width: 70%;
+}
+h1,h2,h3{
+    text-align: center;
+    margin-top: 20px;
+}
+form{
+    margin-top: 20px;
+}
+
+#title{
+    text-align: center;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.apartado{
+    margin-right: 20px;
+}
+
+#title_char{
+    margin-left: 20px;
+    font-weight: bold;
+    font-size: 2em;
+    align-items: center;
+    color: #198754;
+}
+
+.bg-image {
+    position: relative;
+}
+
+.mask {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.imagetxt{
+    background-color:#19875482;
+    padding: 10px;
+    border-radius: 10px;
+    color: white;
+    display: flex;
+
+    /* fit content */
+    width: fit-content;
+}
+
+.FAQ{
+    margin-bottom: 20px;
+}
+
+.fila{
+    margin-top: 1em;
+}
+
+body{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+footer{
+    margin-top: auto;
+}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Synthetic data generator</title>
+{% endblock %}
+
+{% block body %}
+<header style="position: sticky; top: 0; z-index: 1;">
+    <nav class="navbar navbar-light bg-light" >
+        <a class="navbar-brand" id="title" href="/">
+            <img src="../static/images/logouca.png" alt="Logo herramienta uca" width="50" height="50" class="d-inline-block align-top">
+            <div id="title_char">Synthetic Data Generator</div>
+        </a>
+        <!-- 3 options at right of the nav bar -->
+        <div class="form-inline">
+            <a href="/" class="btn btn-outline-success apartado" style="font-size: 1.4em">Home</a>
+            {% if user.is_authenticated: %}
+                <a href="/logout" class="btn btn-outline-success apartado" style="font-size: 1.4em">Logout</a>
+            {% else: %}
+                <a href="/login" class="btn btn-outline-success apartado" style="font-size: 1.4em">Login</a>
+            {% endif %}
+            <a href="/generate" class="btn btn-outline-success apartado" style="font-size: 1.4em">Generate</a>
+            <a href="/about" class="btn btn-outline-success apartado" style="font-size: 1.4em">About</a>
+        </div>
+    </nav>
+</header>
+<div class="container">
+    <div class="aboutproject">
+        <h1 class="text-center" style="margin-top: 1.2em; margin-bottom: 1.2em;">About the project</h1>
+        <p class="info">This project was made by Francisco Javier Molina Rojas as his Bachelor´s Degree Final Project, and it was directed by Dr. Juan Manuel Dodero Beardo and codirected by Dra. Mercedes Rodríguez García.</p>
+        <p class="info">The project uses:</p>
+        <ul class="info">
+            <li><a href="https://www.python.org/" style="color:#198754;">Python</a> as the main programming language.</li>
+            <li><a href="https://flask.palletsprojects.com/en/3.0.x/" style="color:#198754;">Flask</a> as the web framework.</li>
+            <li><a href="https://getbootstrap.com/" style="color:#198754;">Bootstrap</a> as the CSS framework.</li>
+            <li><a href="https://www.sqlite.org/" style="color:#198754;">SQLite</a> as the database.</li>
+            <li><a href="https://docs.sdv.dev/sdv" style="color:#198754;">SDV</a> (Synthetic Data Vault) as the library that provides a set of tools to generate and evaluate synthetic data.</li>
+        </ul>
+        <p class="info">If you want to check out the source code, you can find it <a href="https://github.com/Javivi-MR/pruebasFlask" style="color:#198754;">here</a>.</p>
+    </div>
+    <div class="aboutme">
+        <h1 class="text-center" style="margin-top: 1.2em; margin-bottom: 1.2em;">About me</h1>
+        <p class="info">If you need any kind of information or have a suggestion, you can contact me on:</p>
+        <ul class="info">
+            <li><a href="https://www.linkedin.com/in/francisco-javier-molina-rojas-11b126213/" style="color:#198754;">LinkedIn</a></li>
+            <li><a href="https://github.com/Javivi-MR" style="color:#198754;">GitHub</a></li>
+            <li><a href="mailto:javier.molinarojas@alum.uca.es" style="color:#198754;">Email</a></li>
+        </ul>
+    </div>
+</div>
+<footer>
+    <div class="footer">
+        <nav class="navbar navbar-light bg-light" style="justify-content: center;">
+            <div class="navbar-brand" style="display: flex; align-items: center; gap: 20px;">
+                <img src="../static/images/logouca.png" alt="Logo herramienta uca" width="50" height="50" class="d-inline-block align-top">
+                <div id="">Synthetic Data Generator</div>
+                <p style="display: contents;">© 2024</p>
+            </div>
+        </nav>
+    </div>
+</footer>
+{% endblock %}

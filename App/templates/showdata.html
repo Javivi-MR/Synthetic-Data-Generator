@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Synthetic data generator</title>
+{% endblock %}
+
+{% block body %}
+<header style="position: sticky; top: 0; z-index: 1;">
+    <nav class="navbar navbar-light bg-light" >
+        <a class="navbar-brand" id="title" href="/">
+            <img src="../static/images/logouca.png" alt="Logo herramienta uca" width="50" height="50" class="d-inline-block align-top">
+            <div id="title_char">Synthetic Data Generator</div>
+        </a>
+        <!-- 3 options at right of the nav bar -->
+        <div class="form-inline">
+            <a href="/" class="btn btn-outline-success apartado" style="font-size: 1.4em">Home</a>
+            {% if user.is_authenticated: %}
+                <a href="/logout" class="btn btn-outline-success apartado" style="font-size: 1.4em">Logout</a>
+            {% else: %}
+                <a href="/login" class="btn btn-outline-success apartado" style="font-size: 1.4em">Login</a>
+            {% endif %}
+            <a href="/generate" class="btn btn-outline-success apartado" style="font-size: 1.4em">Generate</a>
+            <a href="/about" class="btn btn-outline-success apartado" style="font-size: 1.4em">About</a>
+        </div>
+    </nav>
+</header>
+<div class="content">
+    <h6>Bellow you can see 5 rows of each dataset</h6>
+    <div class="OriginalData" style="margin-bottom: 1.3em">
+        <h2>Original Data</h2>
+        <table>
+            <tr>
+                {% for column in real_data.columns %}
+                <th>{{ column }}</th>
+                {% endfor %}
+            </tr>
+            {% for row in real_data.head(5).values %}
+            <tr>
+                {% for value in row %}
+                <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="SyntheticData" style="margin-bottom: 1.3em">
+        <h2>Synthetic Data</h2>
+        <table>
+            <tr>
+                {% for column in synthetic_data.columns %}
+                <th>{{ column }}</th>
+                {% endfor %}
+            </tr>
+            {% for row in synthetic_data.head(5).values %}
+            <tr>
+                {% for value in row %}
+                <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <!-- make a button to download the synthetic data -->
+    <a href="../static/data/{{id}}_s_{{file_name}}" class="btn btn-outline-success" style="font-size: 1.4em;">Download synthetic data</a>
+    <!-- form to compare the data -->
+    <form action="/compare/{{id}}" method="post">
+        <button type="submit" class="btn btn-success" style="margin-bottom:1em;">Compare</button>
+    </form>
+
+</div>
+<footer>
+    <div class="footer">
+        <nav class="navbar navbar-light bg-light" style="justify-content: center;">
+            <div class="navbar-brand" style="display: flex; align-items: center; gap: 20px;">
+                <img src="../static/images/logouca.png" alt="Logo herramienta uca" width="50" height="50" class="d-inline-block align-top">
+                <div id="">Synthetic Data Generator</div>
+                <p style="display: contents;">© 2024</p>
+            </div>
+        </nav>
+    </div>
+</footer>
+{% endblock %}

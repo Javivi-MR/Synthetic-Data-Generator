@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Synthetic data generator</title>
+<link rel="stylesheet" href="{{ url_for('static',filename='css/compare.css') }}">
+{% endblock %}
+
+{% block body %}
+<header style="position: sticky; top: 0; z-index: 1;">
+    <nav class="navbar navbar-light bg-light" >
+        <a class="navbar-brand" id="title" href="/">
+            <img src="../static/images/logouca.png" alt="Logo herramienta uca" width="50" height="50" class="d-inline-block align-top">
+            <div id="title_char">Synthetic Data Generator</div>
+        </a>
+        <!-- 3 options at right of the nav bar -->
+        <div class="form-inline">
+            <a href="/" class="btn btn-outline-success apartado" style="font-size: 1.4em">Home</a>
+            {% if user.is_authenticated: %}
+                <a href="/logout" class="btn btn-outline-success apartado" style="font-size: 1.4em">Logout</a>
+            {% else: %}
+                <a href="/login" class="btn btn-outline-success apartado" style="font-size: 1.4em">Login</a>
+            {% endif %}
+            <a href="/generate" class="btn btn-outline-success apartado" style="font-size: 1.4em">Generate</a>
+            <a href="/about" class="btn btn-outline-success apartado" style="font-size: 1.4em">About</a>
+        </div>
+    </nav>
+</header>
+<div class="content">
+    <h1 style="margin-top: 20px; color: #198754">Synthetic data quality</h1>
+    <div class="resultados">
+        <h3 style="margin-top: 20px">The evaluation process made by SDMetrics gives a score of {{score}} of similarity</h3>
+        <!--Ahora mostraremos para cada columna el diagrama guardado em ../images -->
+        <h1 style="margin-top: 20px; color: #198754">Columns comparison</h1>
+        {% for column in real_data.columns %}
+        <div class="column">
+            <h4 style="margin-top: 10px; margin-bottom: 10px; text-align: center;">Similarity graphic on attribute {{column}}</h4>
+            <img src="../static/plots/{{id + column}}.png" alt="Similarity graphic on attribute {{column}}">
+        </div>
+        {% endfor %}
+    </div>
+    <a href="../static/data/{{id}}_s_{{file_name}}" class="btn btn-success" style="margin-top: 20px; margin-bottom: 20px">Download synthetic dataset</a>
+    <a href="/generate" class="btn btn-success" style="margin-top: 20px; margin-bottom: 20px">Generate other synthetic dataset</a>
+</div>
+<footer>
+    <div class="footer">
+        <nav class="navbar navbar-light bg-light" style="justify-content: center;">
+            <div class="navbar-brand" style="display: flex; align-items: center; gap: 20px;">
+                <img src="../static/images/logouca.png" alt="Logo herramienta uca" width="50" height="50" class="d-inline-block align-top">
+                <div id="">Synthetic Data Generator</div>
+                <p style="display: contents;">© 2024</p>
+            </div>
+        </nav>
+    </div>
+</footer>
+{% endblock %}
