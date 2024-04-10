@@ -65,7 +65,6 @@ class Login(FlaskForm):
 
 #If you are running this for the first time, uncomment the following 2 lines
 #and then comment them again after running the app once
-
 #with app.app_context():
 #    db.create_all()
 
@@ -146,9 +145,11 @@ def upload():
 
         last_dataset = db.session.query(Dataset).order_by(Dataset.id.desc()).first()
 
+        print(last_dataset.id)
+
         # Check if a dataset was returned
         if last_dataset is not None:
-            id = last_dataset.id
+            id = last_dataset.id + 1
         else:
             id = 1
 
@@ -175,9 +176,9 @@ def delete(id):
     else:
         return redirect(url_for('generate'))
 
-@app.route('/compare/<id>', methods=['POST', 'GET'])
+@app.route('/evaluate/<id>', methods=['POST', 'GET'])
 @login_required
-def compare(id):
+def evaluate(id):
     #check if the dataset exists and if it belongs to the user
     dataset = load_dataset(id)
     if dataset is None or dataset.user_id != current_user.id:
@@ -195,7 +196,7 @@ def compare(id):
         plot = get_column_plot(real_data, synthetic_data, column)
         plot.write_image('./static/plots/' + str(id) + column + '.png')
 
-    return render_template('compare.html',user=current_user,file_name=dataset.name,id=id,score=report.get_score(),real_data=real_data,synthetic_data=synthetic_data)
+    return render_template('evaluate.html',user=current_user,file_name=dataset.name,id=id,score=report.get_score(),real_data=real_data,synthetic_data=synthetic_data)
 
 @app.route('/about', methods=['POST', 'GET'])
 def about():
