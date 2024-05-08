@@ -145,8 +145,6 @@ def upload():
 
         last_dataset = db.session.query(Dataset).order_by(Dataset.id.desc()).first()
 
-        print(last_dataset.id)
-
         # Check if a dataset was returned
         if last_dataset is not None:
             id = last_dataset.id + 1
@@ -196,7 +194,14 @@ def evaluate(id):
         plot = get_column_plot(real_data, synthetic_data, column)
         plot.write_image('./static/plots/' + str(id) + column + '.png')
 
-    return render_template('evaluate.html',user=current_user,file_name=dataset.name,id=id,score=report.get_score(),real_data=real_data,synthetic_data=synthetic_data)
+    num_columns = len(real_data.columns) # Número de columnas en el dataset
+    column_pairs = [(real_data.columns[i], real_data.columns[j]) # Pares de columnas para obtener la covarianza
+                    for i in range(num_columns)
+                    for j in range(i + 1, num_columns)
+                    if real_data[real_data.columns[i]].dtype in ['int64', 'float64'] and
+                    real_data[real_data.columns[j]].dtype in ['int64', 'float64']]
+
+    return render_template('evaluate.html',user=current_user,file_name=dataset.name,id=id,score=report.get_score(),real_data=real_data,synthetic_data=synthetic_data, column_pairs=column_pairs)
 
 @app.route('/about', methods=['POST', 'GET'])
 def about():
