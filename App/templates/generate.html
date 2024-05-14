@@ -2,6 +2,19 @@
 
 {% block head %}
 <title>Synthetic data generator</title>
+<link rel="stylesheet" href="{{ url_for('static',filename='css/generate.css') }}">
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("GenButton").addEventListener("click", function() {
+        if(document.getElementById("rows").value == "" || document.getElementById("synthetizer").value == "") {
+            return;
+        }
+        document.getElementById("btext").style.display = "none";
+        document.getElementById("GenButton").classList.add("button--loading");
+        console.log("Button clicked")
+    });
+});
+</script>
 {% endblock %}
 
 {% block body %}
@@ -58,7 +71,18 @@
                             <form action="/generate/{{dataset.id}}" method="post" style="margin-right: 10px; margin-top: 0; display: flex">
                                 <label for="rows" class="form-label" style="display: flex; align-items: center; margin-right: 10px">Number of rows:</label>
                                 <input class="form-control" type="number" id="rows" name="rows" required style="width: 100px; margin-right: 10px">
-                                <button type="submit" class="btn btn-outline-success">Generate</button>
+                                <!-- Select the type of synthetizer for the ones SDV offers -->
+                                <label for="synthetizer" class="form-label" style="display: flex; align-items: center; margin-right: 10px">Synthetizer:</label>
+                                <select class="form-select" id="synthetizer" name="synthetizer" required style="width: 200px; margin-right: 10px">
+                                    <option value="fast_ml">Fast ML</option>
+                                    <option value="gaussian_copula">Gaussian Copula</option>
+                                    <option value="ctgan">CTGAN</option>
+                                    <option value="copulagan">CopulaGAN</option>
+                                    <option value="tvae">TVAE</option>
+                                </select>
+                                <button type="submit" class="btn btn-outline-success" id="GenButton">
+                                    <label id="btext">Generate</label>
+                                </button>
                             </form>
                             <!-- Form to send the dataset id to the server and delete the dataset -->
                             <form action="/delete/{{dataset.id}}" method="post" style="margin-top: 0">
@@ -69,12 +93,30 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <!-- Button to upload a dataset -->
+            <div class="text-center" style="margin-top: 1.4em; margin-bottom: 1.4em;">
+                <a href="/upload" class="btn btn-outline-success" style="font-size: 1.4em;">Upload a dataset</a>
+            </div>
+            <!-- Section with information about the synthetizers -->
+            <div class="alert alert-info" role="alert">
+                <h2 class="alert-heading">Synthetizers</h2>
+                <p style="text-align: center;">The Synthetic Data Generator offers different synthetizers to generate synthetic data. The synthetizers available are:</p>
+                <div class="SynthizerList">
+                    <ul>
+                        <li>Fast ML: A synthetizer based on the Fast ML library.</li>
+                        <li>Gaussian Copula: A synthetizer based on the Gaussian Copula library.</li>
+                        <li>CTGAN: A synthetizer based on the CTGAN library.</li>
+                        <li>CopulaGAN: A synthetizer based on the CopulaGAN library.</li>
+                        <li>TVAE: A synthetizer based on the TVAE library.</li>
+                    </ul>
+                </div>
+            </div>
         </div>
         {% endif %}
     </div>
 </div>
 <footer>
-    <div class="footer">
+    <div class="footer" style="bottom: 0">
         <nav class="navbar navbar-light bg-light" style="justify-content: center;">
             <div class="navbar-brand" style="display: flex; align-items: center; gap: 20px;">
                 <img src="../static/images/logouca.png" alt="Logo herramienta uca" width="50" height="50" class="d-inline-block align-top">

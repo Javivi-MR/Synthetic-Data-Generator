@@ -2,6 +2,16 @@
 
 {% block head %}
 <title>Synthetic data generator</title>
+<link rel="stylesheet" href="{{ url_for('static',filename='css/showdata.css') }}">
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("EvButton").addEventListener("click", function() {
+            document.getElementById("EvButton").classList.add("button--loading");
+            document.getElementById("btext").style.display = "none";
+            console.log("Button clicked")
+        });
+    });
+</script>
 {% endblock %}
 
 {% block body %}
@@ -64,7 +74,9 @@
     <a href="../static/data/{{id}}_s_{{file_name}}" class="btn btn-outline-success" style="font-size: 1.4em;">Download synthetic data</a>
     <!-- form to compare the data -->
     <form action="/evaluate/{{id}}" method="post">
-        <button type="submit" class="btn btn-success" style="margin-bottom:1em;">Evaluate</button>
+        <button type="submit" class="btn btn-success" id="EvButton" style="margin-bottom:1em; align-items: center; justify-content: center; display: flex;">
+            <label id="btext">Evaluate</label>
+        </button>
     </form>
 
 </div>

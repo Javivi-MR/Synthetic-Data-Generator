@@ -8,6 +8,7 @@ from flask_bcrypt import Bcrypt
 
 from sdv.lite import SingleTablePreset
 from sdv.metadata import SingleTableMetadata
+from sdv.single_table import GaussianCopulaSynthesizer, CTGANSynthesizer, CopulaGANSynthesizer, TVAESynthesizer
 from sdmetrics.reports.single_table import QualityReport
 from sdmetrics.visualization import get_column_plot
 import pandas as pd
@@ -119,10 +120,32 @@ def generate_id(id):
 
         metadata = SingleTableMetadata()
         metadata.detect_from_dataframe(real_data)
+        synthetic_data = None
 
-        synthesizer = SingleTablePreset(metadata, name='FAST_ML')
-        synthesizer.fit(real_data)
-        synthetic_data = synthesizer.sample(int(request.form['rows'])) #Generar datos sintéticos con la misma cantidad de filas que el dataset original
+        if request.form['synthetizer'] == 'fast_ml':
+            synthesizer = SingleTablePreset(metadata, name='FAST_ML')
+            synthesizer.fit(real_data)
+            synthetic_data = synthesizer.sample(int(request.form['rows']))
+
+        elif request.form['synthetizer'] == 'copulagan':
+            synthesizer = CopulaGANSynthesizer(metadata)
+            synthesizer.fit(real_data)
+            synthetic_data = synthesizer.sample(int(request.form['rows']))
+
+        elif request.form['synthetizer'] == 'ctgan':
+            synthesizer = CTGANSynthesizer(metadata)
+            synthesizer.fit(real_data)
+            synthetic_data = synthesizer.sample(int(request.form['rows']))
+
+        elif request.form['synthetizer'] == 'gaussian_copula':
+            synthesizer = GaussianCopulaSynthesizer(metadata)
+            synthesizer.fit(real_data)
+            synthetic_data = synthesizer.sample(int(request.form['rows']))
+
+        elif request.form['synthetizer'] == 'tvae':
+            synthesizer = TVAESynthesizer(metadata)
+            synthesizer.fit(real_data)
+            synthetic_data = synthesizer.sample(int(request.form['rows']))
 
         synthetic_data.to_csv('./static/data/' + str(id) + '_s_' + dataset.name, index=False)
         return render_template('showdata.html', id=id ,user=current_user ,file_name=dataset.name, real_data=real_data, synthetic_data=synthetic_data)
