@@ -13,11 +13,16 @@ from sdmetrics.reports.single_table import QualityReport
 from sdmetrics.visualization import get_column_plot
 import pandas as pd
 
+import os
+import config as C
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = C.DATA_BASE_URI
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
-app.config['SECRET_KEY'] = 'secret'
+app.config['SECRET_KEY'] = C.SECRET_KEY
+app.config['EXECUTOR_TYPE'] = 'process'
+app.config['EXECUTOR_MAX_WORKERS'] = C.WORKERS
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -64,10 +69,9 @@ class Login(FlaskForm):
     submit = SubmitField('LogIn')
 
 
-#If you are running this for the first time, uncomment the following 2 lines
-#and then comment them again after running the app once
-#with app.app_context():
-#    db.create_all()
+with app.app_context():
+    if not os.path.exists('database.db'):
+        db.create_all()
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -114,7 +118,6 @@ def generate():
 @login_required
 def generate_id(id):
     if request.method == 'POST':
-        #request comes with the number of rows to generate with name rows
         dataset = load_dataset(id)
         real_data = pd.read_csv(dataset.path)
 
@@ -147,8 +150,8 @@ def generate_id(id):
             synthesizer.fit(real_data)
             synthetic_data = synthesizer.sample(int(request.form['rows']))
 
-        synthetic_data.to_csv('./static/data/' + str(id) + '_s_' + dataset.name, index=False)
-        return render_template('showdata.html', id=id ,user=current_user ,file_name=dataset.name, real_data=real_data, synthetic_data=synthetic_data)
+        synthetic_data.to_csv(C.SYNTHETIC_PATH + str(id) + '_s_' + dataset.name, index=False)
+        return render_template('showdata.html', id=id, user=current_user ,file_name=dataset.name, real_data=real_data, synthetic_data=synthetic_data)
     else:
         return redirect(url_for('generate'))
 
@@ -157,14 +160,17 @@ def generate_id(id):
 @login_required
 def upload():
     if request.method == 'POST':
-        print(request.form)
         if 'dataset' not in request.files:
-            return 'No file part'
+            return render_template('error.html', user=current_user, error='No selected file.')
 
         file = request.files['dataset']
 
         if file.filename == '':
-            return 'No selected file'
+            return render_template('error.html', user=current_user, error='No selected file.')
+
+        if file.filename.split('.')[-1] != 'csv':
+            return render_template('error.html', user=current_user, error='The file must be a csv file.')
+
 
         last_dataset = db.session.query(Dataset).order_by(Dataset.id.desc()).first()
 
@@ -175,9 +181,9 @@ def upload():
             id = 1
 
         # Especifica la ubicación donde deseas almacenar el archivo
-        file.save('./static/data/' + str(id) + '_' + file.filename)
+        file.save(C.DATASET_PATH + str(id) + '_' + file.filename)
 
-        dataset = Dataset(id=id, name=file.filename, path='./static/data/' + str(id) + '_' + file.filename, user_id=current_user.id)
+        dataset = Dataset(id=id, name=file.filename, path=C.DATASET_PATH + str(id) + '_' + file.filename, user_id=current_user.id)
         db.session.add(dataset)
         db.session.commit()
 
@@ -206,7 +212,7 @@ def evaluate(id):
         return redirect(url_for('generate'))
 
     real_data = pd.read_csv(dataset.path)
-    synthetic_data = pd.read_csv('./static/data/' + str(id) + '_s_' + dataset.name)
+    synthetic_data = pd.read_csv(C.DATASET_PATH + str(id) + '_s_' + dataset.name)
     metadata = SingleTableMetadata()
     metadata.detect_from_dataframe(real_data)
 
@@ -215,7 +221,7 @@ def evaluate(id):
 
     for column in real_data.columns:
         plot = get_column_plot(real_data, synthetic_data, column)
-        plot.write_image('./static/plots/' + str(id) + column + '.png')
+        plot.write_image(C.PLOT_PATH + str(id) + column + '.png')
 
     num_columns = len(real_data.columns) # Número de columnas en el dataset
     column_pairs = [(real_data.columns[i], real_data.columns[j]) # Pares de columnas para obtener la covarianza
