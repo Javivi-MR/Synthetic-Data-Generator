@@ -88,6 +88,10 @@ def login():
                 return redirect(url_for('index'))
     return render_template('login.html', form=loginform, user=current_user)
 
+@app.route('/forgot', methods=['POST', 'GET'])
+def forgot():
+    return render_template('forgot.html', user=current_user)
+
 @app.route('/logout', methods=['POST', 'GET'])
 @login_required
 def logout():
@@ -112,7 +116,10 @@ def register():
 @login_required
 def generate():
     datasets = Dataset.query.filter_by(user_id=current_user.id).all()
-    return render_template('generate.html',user=current_user, datasets=datasets)
+    datasets_objs = []
+    for dataset in datasets:
+        datasets_objs.append(pd.read_csv(dataset.path))
+    return render_template('generate.html',user=current_user, datasets=datasets, datasets_objs=datasets_objs)
 
 @app.route('/generate/<id>', methods=['POST', 'GET'])
 @login_required

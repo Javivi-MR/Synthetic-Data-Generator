@@ -24,37 +24,18 @@
         </div>
     </nav>
 </header>
-{% if user.is_authenticated: %}
-    <div class="container">
-        <div class="alert alert-success" role="alert" style="margin-top: 3em;>
-            You are already logged in
+
+<div class="d-flex align-items-center justify-content-center" style="margin-top: 10em">
+    <div class="card">
+        <div class="card-header">
+            <h2>Contact the system administrator</h2>
         </div>
-    </div>
-{% else: %}
-<div class="container">
-    <div class="login">
-        <h1 class="text-center" style="margin-top: 1.2em; margin-bottom: 1.2em;">Login</h1>
-        <form action="/login" method="post">
-            {{form.hidden_tag()}}
-            <div class="mb-3">
-                <p>Enter your username:</p>
-                <input type="text" class="form-control" id="username" name="username" placeholder="Username" required maxlength="50" minlength="2">
-            </div>
-            <div class="mb-3">
-                <p>Enter your password:</p>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required maxlength="50" minlength="4">
-                <div>
-                    <a href="/forgot" style="color:#198754;">Have you forgotten your password?</a>
-                </div>
-            </div>
-            <button type="submit" class="btn btn-success" style="margin-bottom:1em;">Login</button>
-        </form>
-        <div style="margin-bottom: 1em;">
-            <a href="/register" style="color:#198754;">Don't have an account? Register here</a>
+        <div class="card-body">
+            <p class="card-text">If you have forgotten your password, please, contact the system administrator to get a new one.</p>
         </div>
     </div>
 </div>
-{% endif %}
+
 <footer>
     <div class="footer">
         <nav class="navbar navbar-light bg-light" style="justify-content: center;">
