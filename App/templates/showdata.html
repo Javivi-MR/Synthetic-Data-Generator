@@ -35,7 +35,7 @@
     </nav>
 </header>
 <div class="content">
-    <h6>Bellow you can see 5 rows of each dataset</h6>
+    <h6 style="margin-top: 1em">Bellow you can see the first five rows of each dataset</h6>
     <div class="OriginalData" style="margin-bottom: 1.3em">
         <h2>Original Data</h2>
         <table>
@@ -71,7 +71,7 @@
         </table>
     </div>
     <!-- make a button to download the synthetic data -->
-    <a href=".{{SYNTHETIC_PATH + id}}_s_{{file_name}}" class="btn btn-outline-success" style="font-size: 1.4em;">Download synthetic data</a>
+    <a href=".{{C_SYNTHETIC_PATH + id}}_s_{{file_name}}" class="btn btn-outline-success" style="font-size: 1.4em;">Download synthetic data</a>
     <!-- form to compare the data -->
     <form action="/evaluate/{{id}}" method="post">
         <button type="submit" class="btn btn-success" id="EvButton" style="margin-bottom:1em; align-items: center; justify-content: center; display: flex;">

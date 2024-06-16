@@ -90,7 +90,17 @@
     });
     document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("GenButton_{{dataset.id}}").addEventListener("click", function() {
-            Swal.fire({
+            //if the rows are less than 1 or epochs are less than 1, dont show
+            if(document.getElementById("rows_{{dataset.id}}").value < 1){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'The number of rows must be greater than 0',
+                });
+                return false;
+            }
+            else{
+                Swal.fire({
                 title: 'Generating...',
                 html: '<div style="display: flex; overflow:hidden; align-content: center; align-self: center; justify-content: center;"><div class="loader"></div></div>',
                 allowOutsideClick: false,
@@ -98,10 +108,10 @@
                 onBeforeOpen: () => {
                     Swal.showLoading()
                 },
-            });
+                });
+            }
         });
     });
-
 
     {% endfor %}
 
@@ -174,7 +184,7 @@
                                 <div id="form_container_options_{{dataset.id}}">
                                     <div id="options_1_{{dataset.id}}" style="display: flex;">
                                         <label for="rows_{{dataset.id}}" class="form-label" style="display: flex; align-items: center; margin-right: 10px">Number of rows:</label>
-                                        <input class="form-control" type="number" id="rows_{{dataset.id}}" name="rows_{{dataset.id}}" required style="width: 100px; margin-right: 10px">
+                                        <input class="form-control" type="number" id="rows_{{dataset.id}}" min="1" name="rows_{{dataset.id}}" required style="width: 100px; margin-right: 10px">
                                         <!-- Select the type of synthetizer for the ones SDV offers -->
                                         <label for="synthetizer_{{dataset.id}}" class="form-label" style="display: flex; align-items: center; margin-right: 10px">Synthetizer:</label>
                                         <select class="form-select" id="synthetizer_{{dataset.id}}" name="synthetizer_{{dataset.id}}" required style="width: 170px; margin-right: 10px">
@@ -200,7 +210,7 @@
                                         </select>
                                         <!-- input for epochs -->
                                         <label for="epochs_{{dataset.id}}" class="form-label" id="epochsl_{{dataset.id}}" style="display: none; align-items: center; margin-right: 10px">Epochs:</label>
-                                        <input class="form-control" type="number" id="epochs_{{dataset.id}}" name="epochs_{{dataset.id}}" required style="width: 100px; margin-right: 10px; display: none" value="300">
+                                        <input class="form-control" type="number" id="epochs_{{dataset.id}}" name="epochs_{{dataset.id}}" min="1" required style="width: 100px; margin-right: 10px; display: none" value="300">
                                     </div>
                                     <!-- Now we have to show all the columns of the dataset to select numerical_distributions for each one, this will be a select with the options of 'norm' 'beta', 'truncnorm', 'uniform', 'gamma' or 'gaussian_kde' -->
                                     <p id="num_dis_txt_{{dataset.id}}" style="display: none; margin-top: 1em">Select for each column the numerical distribution: </p>
@@ -273,11 +283,11 @@
                 <p style="text-align: center;">The Synthetic Data Generator offers different synthetizers to generate synthetic data. The synthetizers available are:</p>
                 <div class="SynthizerList">
                     <ul>
-                        <li>Fast ML: A synthetizer based on the Fast ML library.</li>
-                        <li>Gaussian Copula: A synthetizer based on the Gaussian Copula library.</li>
-                        <li>CTGAN: A synthetizer based on the CTGAN library.</li>
-                        <li>CopulaGAN: A synthetizer based on the CopulaGAN library.</li>
-                        <li>TVAE: A synthetizer based on the TVAE library.</li>
+                        <li>Fast ML: The first synthesizer developed by SDV. It uses machine learning methods for synthetic data generation.</li>
+                        <li>Gaussian Copula: A synthesizer that, by using classical statistical methods, trains a model and generates synthetic data.</li>
+                        <li>CTGAN: A synthesizer that, through the use of deep learning methods based on GAN, trains a model and generates synthetic data.</li>
+                        <li>CopulaGAN: A synthesizer that, by using a mix of classical statistical methods and deep learning methods based on GAN, trains a model and generates synthetic data.</li>
+                        <li>TVAE: A synthesizer that, through the use of neural network techniques based on variational autoencoder (VAE), trains a model and generates synthetic data.</li>
                     </ul>
                 </div>
             </div>

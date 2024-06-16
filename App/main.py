@@ -102,6 +102,7 @@ def login():
             if bcrypt.check_password_hash(user.password, loginform.password.data):
                 login_user(user)
                 return redirect(url_for('index'))
+        return render_template('error.html', user=current_user, error='Invalid username or password')
     return render_template('login.html', form=loginform, user=current_user)
 
 @app.route('/forgot', methods=['POST', 'GET'])
@@ -124,6 +125,9 @@ def register():
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('login'))
+    elif registerform.errors:
+        return render_template('error.html', user=current_user, error='Username already exists. Choose a different one.')
+
 
     return render_template('register.html', form=registerform, user=current_user)
 
@@ -141,6 +145,9 @@ def generate():
 @login_required
 def generate_id(id):
     if request.method == 'POST':
+        if int(request.form['rows_' + str(id)]) <= 0 or int(request.form['epochs_' + str(id)]) <= 0:
+            return render_template('error.html', user=current_user, error='The number of rows and epochs must be greater than 0')
+
         yes_no_parser = {'Yes': True, 'No': False}
 
         dataset = load_dataset(id)
@@ -323,6 +330,13 @@ def evaluate(id):
 
     report = QualityReport()
     report.generate(real_data, synthetic_data,metadata.to_dict())
+
+    column_fig = report.get_visualization(property_name='Column Shapes')
+    column_fig.write_image(C.PLOT_PATH + str(id) + 'column_shapes.png')
+
+    pair_fig = report.get_visualization(property_name='Column Pair Trends')
+    pair_fig.write_image(C.PLOT_PATH + str(id) + 'column_pair_trends.png')
+
 
     for column in real_data.columns:
         plot = get_column_plot(real_data, synthetic_data, column)
