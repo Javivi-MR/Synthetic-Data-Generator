@@ -49,15 +49,15 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <img src="../static/plots/{{id + column}}.png" alt="Similarity graphic on attribute {{column}}" style="width: 100%">
+                                <img src=".{{C_PLOT_PATH + id + column}}.png" alt="Similarity graphic on attribute {{column}}" style="width: 100%">
                                 <p style="text-align: left; margin-left: 2em;"><b> Data type:</b> <span style="color: black; text-decoration-line: underline">{{ real_data[column].dtype }}</span></p>
                                 <!-- if the data type is numeric, we have to show the mean and the standard deviation of the original data vs the synthetic data. Truncate to show only 2 decimals -->
                                 <!-- put mean real data bold and color purpleblack, then the result without any style. and in synthetic data put the mean bold and color cool cyan, then the result without any style -->
                                 {% if real_data[column].dtype == 'int64' or real_data[column].dtype == 'float64' %}
-                                    <p style="text-align: left; margin-left: 2em;color: #450d45;"><b> Mean real data: </b><span style="color: black; text-decoration-line: underline ">{{ real_data[column].mean()|round(2) }}</span></p>
-                                    <p style="text-align: left; margin-left: 2em;color: #10878f;"><b>Mean synthetic data: </b><span style="color: black; text-decoration-line: underline ">{{ synthetic_data[column].mean()|round(2) }}</span></p>
-                                    <p style="text-align: left; margin-left: 2em;color: #450d45;"><b>Standard deviation real data: </b><span style="color: black; text-decoration-line: underline ">{{ real_data[column].std()|round(2) }}</span></p>
-                                    <p style="text-align: left; margin-left: 2em;color: #10878f;"><b>Standard deviation synthetic data: </b><span style="color: black; text-decoration-line: underline ">{{ synthetic_data[column].std()|round(2) }}</span></p>
+                                    <p style="text-align: left; margin-left: 2em;color: #450d45;"><b> Mean real data: </b><span style="color: black; text-decoration-line: underline ">{{ real_data[column].mean()|round(4) }}</span></p>
+                                    <p style="text-align: left; margin-left: 2em;color: #10878f;"><b>Mean synthetic data: </b><span style="color: black; text-decoration-line: underline ">{{ synthetic_data[column].mean()|round(4) }}</span></p>
+                                    <p style="text-align: left; margin-left: 2em;color: #450d45;"><b>Standard deviation real data: </b><span style="color: black; text-decoration-line: underline ">{{ real_data[column].std()|round(4) }}</span></p>
+                                    <p style="text-align: left; margin-left: 2em;color: #10878f;"><b>Standard deviation synthetic data: </b><span style="color: black; text-decoration-line: underline ">{{ synthetic_data[column].std()|round(4) }}</span></p>
                                 {% endif %}
                                 <!-- if the data type is object, we have to show the mode -->
                                 {% if real_data[column].dtype == 'object' %}
@@ -98,9 +98,47 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body" style="display: grid; justify-content: center; align-items: center">
-                                <img src="../static/plots/{{id + column1 + column2}}.png" alt="Covariance graphic on attributes {{column1}} and {{column2}}" style="width: 100%">
-                                <p style="text-align: left; margin-left: 2em;"><b> Covariance real data: </b><span style="color: black; text-decoration-line: underline ">{{ real_data[column1].cov(real_data[column2])|round(2) }}</span></p>
-                                <p style="text-align: left; margin-left: 2em;"><b> Covariance synthetic data: </b><span style="color: black; text-decoration-line: underline ">{{ synthetic_data[column1].cov(synthetic_data[column2])|round(2) }}</span></p>
+                                <img src=".{{C_PLOT_PATH + id + column1 + column2}}.png" alt="Covariance graphic on attributes {{column1}} and {{column2}}" style="width: 100%">
+                                <p style="text-align: left; margin-left: 2em;"><b> Covariance real data: </b><span style="color: black; text-decoration-line: underline ">{{ real_data[column1].cov(real_data[column2])|round(4) }}</span></p>
+                                <p style="text-align: left; margin-left: 2em;"><b> Covariance synthetic data: </b><span style="color: black; text-decoration-line: underline ">{{ synthetic_data[column1].cov(synthetic_data[column2])|round(4) }}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if loop.index % 4 == 0 and not loop.last %}
+                </div>
+                <div class="row" style="margin-top: 2em">
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+        <!-- we have to calculate pearson cofficient r and the line y = a + bx, calculate a and b, r = sxy/sx*sy and b= sxy/s^2x a=av(y)-b*av(x) -->
+    <h1 style="margin-top: 20px; color: #198754; text-decoration-line: underline;">Regression comparison</h1>
+    <p style="margin-top: 20px; text-align: center; width: 70em">In the following buttons you can see the regression between the real and synthetic data of each pair of numeric columns. When you click on a button, a pop-up window will show you a plot with the regression between the real and synthetic data of that pair of columns.</p>
+    <div class="RegressionComparison">
+        <div class="row" style="margin-bottom: 2em; margin-top: 1em">
+            {% for column1, column2 in column_pairs %}
+            <div class="col" style="display: grid; justify-content: center; align-items: center">
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#{{id + column1 + column2 + 'reg'}}" style="width: 9em;">
+                    {{column1}} - {{column2}}
+                </button>
+                <div class="modal fade" id="{{id + column1 + column2 + 'reg'}}" tabindex="-1" aria-labelledby="{{id + column1 + column2 + 'reg'}}Label" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="{{id + column1 + column2 + 'reg'}}Label">Regression graphic on attributes {{column1}} and {{column2}}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" style="display: grid; justify-content: center; align-items: center">
+                                <img src=".{{C_PLOT_PATH + id + column1 + column2 + 'reg'}}.png" alt="Regression graphic on attributes {{column1}} and {{column2}}" style="width: 100%">
+                                <p style="text-align: left; margin-left: 2em;"><b> Pearson coefficient real data: </b><span style="color: black; text-decoration-line: underline ">{{ real_data[column1].corr(real_data[column2])|round(4) }}</span></p>
+                                <p style="text-align: left; margin-left: 2em;"><b> Pearson coefficient synthetic data: </b><span style="color: black; text-decoration-line: underline ">{{ synthetic_data[column1].corr(synthetic_data[column2])|round(4) }}</span></p>
+                                <p style="text-align: left; margin-left: 2em;"><b> Regression line real data: </b><span style="color: black; text-decoration-line: underline ">y = {{ (real_data[column2].mean() - (real_data[column1].cov(real_data[column2]) / real_data[column1].std()**2) * real_data[column1].mean())|round(4)}} + {{(real_data[column1].cov(real_data[column2]) / real_data[column1].std()**2)|round(4)}}x</span></p>
+                                <p style="text-align: left; margin-left: 2em;"><b> Regression line synthetic data: </b><span style="color: black; text-decoration-line: underline ">y = {{ (synthetic_data[column2].mean() - (synthetic_data[column1].cov(synthetic_data[column2]) / synthetic_data[column1].std()**2) * synthetic_data[column1].mean())|round(4)}} + {{(synthetic_data[column1].cov(synthetic_data[column2]) / synthetic_data[column1].std()**2)|round(4)}}x</span></p>
+                                <!-- Add r2 value, r2 = r^2-->
+                                <p style="text-align: left; margin-left: 2em;"><b> R² (determination coefficient) real data: </b><span style="color: black; text-decoration-line: underline ">{{ ((real_data[column1].corr(real_data[column2]))**2)|round(4) }}</span></p>
+                                <p style="text-align: left; margin-left: 2em;"><b> R² (determination coefficient) synthetic data: </b><span style="color: black; text-decoration-line: underline ">{{ ((synthetic_data[column1].corr(synthetic_data[column2]))**2)|round(4) }}</span></p>
                             </div>
                         </div>
                     </div>
@@ -114,7 +152,7 @@
         </div>
     </div>
     <h1 style="margin-top: 20px; color: #198754; text-decoration-line: underline;">Download synthetic dataset</h1>
-    <a href="../static/data/{{id}}_s_{{file_name}}" class="btn btn-success" style="margin-top: 20px; margin-bottom: 20px">Download synthetic dataset</a>
+    <a href=".{{C_SYNTHETIC_PATH + id}}_s_{{file_name}}" class="btn btn-success" style="margin-top: 20px; margin-bottom: 20px">Download synthetic dataset</a>
     <a href="/generate" class="btn btn-success" style="margin-top: 20px; margin-bottom: 20px">Generate a distinct synthetic dataset</a>
 </div>
 <footer>

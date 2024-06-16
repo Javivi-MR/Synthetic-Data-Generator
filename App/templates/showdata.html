@@ -71,7 +71,7 @@
         </table>
     </div>
     <!-- make a button to download the synthetic data -->
-    <a href="../static/data/{{id}}_s_{{file_name}}" class="btn btn-outline-success" style="font-size: 1.4em;">Download synthetic data</a>
+    <a href=".{{SYNTHETIC_PATH + id}}_s_{{file_name}}" class="btn btn-outline-success" style="font-size: 1.4em;">Download synthetic data</a>
     <!-- form to compare the data -->
     <form action="/evaluate/{{id}}" method="post">
         <button type="submit" class="btn btn-success" id="EvButton" style="margin-bottom:1em; align-items: center; justify-content: center; display: flex;">

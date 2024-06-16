@@ -12,6 +12,8 @@ from sdv.single_table import GaussianCopulaSynthesizer, CTGANSynthesizer, Copula
 from sdmetrics.reports.single_table import QualityReport
 from sdmetrics.visualization import get_column_plot
 import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
 
 import os
 import config as C
@@ -27,6 +29,22 @@ app.config['EXECUTOR_MAX_WORKERS'] = C.WORKERS
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+def build_system():
+    if not os.path.exists(C.DATASET_PATH):
+        os.makedirs(C.DATASET_PATH)
+    if not os.path.exists(C.SYNTHETIC_PATH):
+        os.makedirs(C.SYNTHETIC_PATH)
+    if not os.path.exists(C.PLOT_PATH):
+        os.makedirs(C.PLOT_PATH)
+
+    with app.app_context():
+        if not os.path.exists('database.db'):
+            db.create_all()
+
+def get_regression_line(x, y):
+    slope, intercept = np.polyfit(x, y, 1)
+    return slope, intercept
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -69,9 +87,7 @@ class Login(FlaskForm):
     submit = SubmitField('LogIn')
 
 
-with app.app_context():
-    if not os.path.exists('database.db'):
-        db.create_all()
+
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -125,40 +141,122 @@ def generate():
 @login_required
 def generate_id(id):
     if request.method == 'POST':
+        yes_no_parser = {'Yes': True, 'No': False}
+
         dataset = load_dataset(id)
         real_data = pd.read_csv(dataset.path)
 
-        metadata = SingleTableMetadata()
-        metadata.detect_from_dataframe(real_data)
+        v_metadata = SingleTableMetadata()
+        v_metadata.detect_from_dataframe(real_data)
         synthetic_data = None
 
-        if request.form['synthetizer'] == 'fast_ml':
-            synthesizer = SingleTablePreset(metadata, name='FAST_ML')
+        if request.form['synthetizer_' + str(id)] == 'fast_ml':
+            synthesizer = SingleTablePreset(v_metadata, name='FAST_ML')
             synthesizer.fit(real_data)
-            synthetic_data = synthesizer.sample(int(request.form['rows']))
+            synthetic_data = synthesizer.sample(int(request.form['rows_' + str(id)]))
 
-        elif request.form['synthetizer'] == 'copulagan':
-            synthesizer = CopulaGANSynthesizer(metadata)
-            synthesizer.fit(real_data)
-            synthetic_data = synthesizer.sample(int(request.form['rows']))
+        elif request.form['synthetizer_' + str(id)] == 'copulagan':
+            v_enforce_min_max = yes_no_parser[request.form['enforce_min_max_values_' + str(id)]]
 
-        elif request.form['synthetizer'] == 'ctgan':
-            synthesizer = CTGANSynthesizer(metadata)
-            synthesizer.fit(real_data)
-            synthetic_data = synthesizer.sample(int(request.form['rows']))
+            v_enforce_rounding = yes_no_parser[request.form['enforce_rounding_' + str(id)]]
 
-        elif request.form['synthetizer'] == 'gaussian_copula':
-            synthesizer = GaussianCopulaSynthesizer(metadata)
-            synthesizer.fit(real_data)
-            synthetic_data = synthesizer.sample(int(request.form['rows']))
+            v_epochs = int(request.form['epochs_' + str(id)])
 
-        elif request.form['synthetizer'] == 'tvae':
-            synthesizer = TVAESynthesizer(metadata)
+            columns_distribution = {}
+
+            v_cuda = yes_no_parser[request.form['cuda_' + str(id)]]
+
+            for column in real_data.columns:
+                if request.form[column + '_' + str(id)] != 'none':
+                    columns_distribution[column] = request.form[column + '_' + str(id)]
+
+            if not columns_distribution:
+                columns_distribution = None
+
+            v_default_distribution = request.form['default_distribution_' + str(id)]
+
+            synthesizer = CopulaGANSynthesizer(
+                metadata=v_metadata,
+                enforce_min_max_values=v_enforce_min_max,
+                enforce_rounding=v_enforce_rounding,
+                numerical_distributions=columns_distribution,
+                default_distribution=v_default_distribution,
+                epochs=v_epochs,
+                verbose=True,
+                cuda=v_cuda)
+
             synthesizer.fit(real_data)
-            synthetic_data = synthesizer.sample(int(request.form['rows']))
+            synthetic_data = synthesizer.sample(int(request.form['rows_' + str(id)]))
+
+        elif request.form['synthetizer_' + str(id)] == 'ctgan':
+            v_enforce_min_max = yes_no_parser[request.form['enforce_min_max_values_' + str(id)]]
+
+            v_enforce_rounding = yes_no_parser[request.form['enforce_rounding_' + str(id)]]
+
+            v_epochs = int(request.form['epochs_' + str(id)])
+
+            v_cuda = yes_no_parser[request.form['cuda_' + str(id)]]
+
+            synthesizer = CTGANSynthesizer(
+                metadata=v_metadata,
+                enforce_min_max_values=v_enforce_min_max,
+                enforce_rounding=v_enforce_rounding,
+                epochs=v_epochs,
+                verbose=True,
+                cuda=v_cuda
+            )
+
+            synthesizer.fit(real_data)
+            synthetic_data = synthesizer.sample(int(request.form['rows_' + str(id)]))
+
+        elif request.form['synthetizer_' + str(id)] == 'gaussian_copula':
+            v_enforce_min_max = yes_no_parser[request.form['enforce_min_max_values_' + str(id)]]
+
+            v_enforce_rounding = yes_no_parser[request.form['enforce_rounding_' + str(id)]]
+
+            columns_distribution = {}
+
+            for column in real_data.columns:
+                if request.form[column + '_' + str(id)] != 'none':
+                    columns_distribution[column] = request.form[column + '_' + str(id)]
+
+            if not columns_distribution:
+                columns_distribution = None
+
+            v_default_distribution = request.form['default_distribution_' + str(id)]
+
+            synthesizer = GaussianCopulaSynthesizer(
+                metadata=v_metadata,
+                enforce_min_max_values=v_enforce_min_max,
+                enforce_rounding=v_enforce_rounding,
+                numerical_distributions=columns_distribution,
+                default_distribution=v_default_distribution
+            )
+            synthesizer.fit(real_data)
+            synthetic_data = synthesizer.sample(int(request.form['rows_' + str(id)]))
+
+        elif request.form['synthetizer_' + str(id)] == 'tvae':
+            v_enforce_min_max = yes_no_parser[request.form['enforce_min_max_values_' + str(id)]]
+
+            v_enforce_rounding = yes_no_parser[request.form['enforce_rounding_' + str(id)]]
+
+            v_epochs = int(request.form['epochs_' + str(id)])
+
+            v_cuda = yes_no_parser[request.form['cuda_' + str(id)]]
+
+            synthesizer = TVAESynthesizer(
+                metadata=v_metadata,
+                enforce_min_max_values=v_enforce_min_max,
+                enforce_rounding=v_enforce_rounding,
+                epochs=v_epochs,
+                cuda=v_cuda
+            )
+
+            synthesizer.fit(real_data)
+            synthetic_data = synthesizer.sample(int(request.form['rows_' + str(id)]))
 
         synthetic_data.to_csv(C.SYNTHETIC_PATH + str(id) + '_s_' + dataset.name, index=False)
-        return render_template('showdata.html', id=id, user=current_user ,file_name=dataset.name, real_data=real_data, synthetic_data=synthetic_data)
+        return render_template('showdata.html', id=id, user=current_user ,file_name=dataset.name, real_data=real_data, synthetic_data=synthetic_data, C_SYNTHETIC_PATH=C.SYNTHETIC_PATH, C_PLOT_PATH=C.PLOT_PATH)
     else:
         return redirect(url_for('generate'))
 
@@ -219,7 +317,7 @@ def evaluate(id):
         return redirect(url_for('generate'))
 
     real_data = pd.read_csv(dataset.path)
-    synthetic_data = pd.read_csv(C.DATASET_PATH + str(id) + '_s_' + dataset.name)
+    synthetic_data = pd.read_csv(C.SYNTHETIC_PATH + str(id) + '_s_' + dataset.name)
     metadata = SingleTableMetadata()
     metadata.detect_from_dataframe(real_data)
 
@@ -237,11 +335,37 @@ def evaluate(id):
                     if real_data[real_data.columns[i]].dtype in ['int64', 'float64'] and
                     real_data[real_data.columns[j]].dtype in ['int64', 'float64']]
 
-    return render_template('evaluate.html',user=current_user,file_name=dataset.name,id=id,score=report.get_score(),real_data=real_data,synthetic_data=synthetic_data, column_pairs=column_pairs)
+    for column1, column2 in column_pairs:
+        plt.figure(figsize=(10, 6))
+        plt.scatter(real_data[column1], real_data[column2], color='blue', alpha=0.5, label='Real Data')
+        plt.scatter(synthetic_data[column1], synthetic_data[column2], color='red', alpha=0.5, label='Synthetic Data')
+        plt.xlabel(column1)
+        plt.ylabel(column2)
+        plt.legend()
+        plt.savefig(C.PLOT_PATH + str(id) + column1 + column2 + '.png')
+        plt.close()
+
+    #make plot with comparison of correlation lines between real and synthetic data
+    for column1, column2 in column_pairs:
+        plt.figure(figsize=(10, 6))
+        plt.scatter(real_data[column1], real_data[column2], color='blue', alpha=0.5, label='Real Data')
+        plt.scatter(synthetic_data[column1], synthetic_data[column2], color='red', alpha=0.5, label='Synthetic Data')
+        slope, intercept = get_regression_line(real_data[column1], real_data[column2])
+        plt.plot(real_data[column1], slope * real_data[column1] + intercept, color='blue')
+        slope, intercept = get_regression_line(synthetic_data[column1], synthetic_data[column2])
+        plt.plot(synthetic_data[column1], slope * synthetic_data[column1] + intercept, color='red')
+        plt.xlabel(column1)
+        plt.ylabel(column2)
+        plt.legend()
+        plt.savefig(C.PLOT_PATH + str(id) + column1 + column2 + 'reg' + '.png')
+        plt.close()
+
+    return render_template('evaluate.html',user=current_user,file_name=dataset.name,id=id,score=report.get_score(),real_data=real_data,synthetic_data=synthetic_data, column_pairs=column_pairs, C_PLOT_PATH=C.PLOT_PATH, C_SYNTHETIC_PATH=C.SYNTHETIC_PATH)
 
 @app.route('/about', methods=['POST', 'GET'])
 def about():
     return render_template('about.html' , user=current_user)
 
 if __name__ == '__main__':
+    build_system()
     app.run(debug=True)

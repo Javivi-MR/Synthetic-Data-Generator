@@ -3,7 +3,10 @@
 {% block head %}
 <title>Synthetic data generator</title>
 <link rel="stylesheet" href="{{ url_for('static',filename='css/generate.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.1/dist/sweetalert2.all.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.1/dist/sweetalert2.min.css" rel="stylesheet">
 <script>
+
     {% for dataset in datasets %}
     document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("synthetizer_{{dataset.id}}").addEventListener("change", function() {
@@ -18,6 +21,7 @@
                     document.getElementById("num_dis_txt_{{dataset.id}}").style.display = "none";
                     document.getElementById("options_3_{{dataset.id}}").style.display = "none";
                     document.getElementById("options_4_{{dataset.id}}").style.display = "none";
+                    document.getElementById("options_5_{{dataset.id}}").style.display = "none";
                     break;
                 case "gaussian_copula":
                     document.getElementById("enforce_min_max_valuesl_{{dataset.id}}").style.display = "block";
@@ -27,23 +31,27 @@
                     document.getElementById("epochsl_{{dataset.id}}").style.display = "none";
                     document.getElementById("epochs_{{dataset.id}}").style.display = "none";
                     document.getElementById("enforce_min_max_values_{{dataset.id}}").value = "Yes";
-                    document.getElementById("enforce_rounding_{{dataset.id}}").value = "No";
+                    document.getElementById("enforce_rounding_{{dataset.id}}").value = "Yes";
+                    document.getElementById("default_distribution_{{dataset.id}}").value = "beta";
                     document.getElementById("num_dis_txt_{{dataset.id}}").style.display = "flex";
                     document.getElementById("options_3_{{dataset.id}}").style.display = "flex";
                     document.getElementById("options_4_{{dataset.id}}").style.display = "flex";
+                    document.getElementById("options_5_{{dataset.id}}").style.display = "none";
                     break;
                 case "ctgan":
-                    document.getElementById("enforce_min_max_valuesl_{{dataset.id}}").style.display = "none";
-                    document.getElementById("enforce_min_max_values_{{dataset.id}}").style.display = "none";
+                    document.getElementById("enforce_min_max_valuesl_{{dataset.id}}").style.display = "block";
+                    document.getElementById("enforce_min_max_values_{{dataset.id}}").style.display = "block";
                     document.getElementById("enforce_roundingl_{{dataset.id}}").style.display = "block";
                     document.getElementById("enforce_rounding_{{dataset.id}}").style.display = "block";
                     document.getElementById("epochsl_{{dataset.id}}").style.display = "block";
                     document.getElementById("epochs_{{dataset.id}}").style.display = "block";
                     document.getElementById("epochs_{{dataset.id}}").value = "300";
-                    document.getElementById("enforce_rounding_{{dataset.id}}").value = "No";
+                    document.getElementById("enforce_min_max_values_{{dataset.id}}").value = "Yes";
+                    document.getElementById("enforce_rounding_{{dataset.id}}").value = "Yes";
                     document.getElementById("num_dis_txt_{{dataset.id}}").style.display = "none";
                     document.getElementById("options_3_{{dataset.id}}").style.display = "none";
                     document.getElementById("options_4_{{dataset.id}}").style.display = "none";
+                    document.getElementById("options_5_{{dataset.id}}").style.display = "flex";
                     break;
                 case "copulagan":
                     document.getElementById("enforce_min_max_valuesl_{{dataset.id}}").style.display = "block";
@@ -52,12 +60,15 @@
                     document.getElementById("enforce_rounding_{{dataset.id}}").style.display = "block";
                     document.getElementById("epochsl_{{dataset.id}}").style.display = "block";
                     document.getElementById("epochs_{{dataset.id}}").style.display = "block";
-                    document.getElementById("epochs_{{dataset.id}}").value = "500";
+                    document.getElementById("epochs_{{dataset.id}}").value = "300";
                     document.getElementById("enforce_min_max_values_{{dataset.id}}").value = "Yes";
-                    document.getElementById("enforce_rounding_{{dataset.id}}").value = "No";
+                    document.getElementById("enforce_rounding_{{dataset.id}}").value = "Yes";
+                    document.getElementById("default_distribution_{{dataset.id}}").value = "beta";
                     document.getElementById("num_dis_txt_{{dataset.id}}").style.display = "flex";
                     document.getElementById("options_3_{{dataset.id}}").style.display = "flex";
                     document.getElementById("options_4_{{dataset.id}}").style.display = "flex";
+                    document.getElementById("options_5_{{dataset.id}}").style.display = "flex";
+
                     break;
                 case "tvae":
                     document.getElementById("enforce_min_max_valuesl_{{dataset.id}}").style.display = "block";
@@ -68,14 +79,30 @@
                     document.getElementById("epochs_{{dataset.id}}").style.display = "block";
                     document.getElementById("epochs_{{dataset.id}}").value = "300";
                     document.getElementById("enforce_min_max_values_{{dataset.id}}").value = "Yes";
-                    document.getElementById("enforce_rounding_{{dataset.id}}").value = "No";
+                    document.getElementById("enforce_rounding_{{dataset.id}}").value = "Yes";
                     document.getElementById("num_dis_txt_{{dataset.id}}").style.display = "none";
                     document.getElementById("options_3_{{dataset.id}}").style.display = "none";
                     document.getElementById("options_4_{{dataset.id}}").style.display = "none";
+                    document.getElementById("options_5_{{dataset.id}}").style.display = "flex";
                     break;
             }
         });
     });
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("GenButton_{{dataset.id}}").addEventListener("click", function() {
+            Swal.fire({
+                title: 'Generating...',
+                html: '<div style="display: flex; overflow:hidden; align-content: center; align-self: center; justify-content: center;"><div class="loader"></div></div>',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                onBeforeOpen: () => {
+                    Swal.showLoading()
+                },
+            });
+        });
+    });
+
+
     {% endfor %}
 
 </script>
@@ -210,10 +237,17 @@
                                             <option value="gaussian_kde">Gaussian KDE</option>
                                         </select>
                                     </div>
+                                    <div id="options_5_{{dataset.id}}" style="display: none; margin-top: 1em;">
+                                        <label for="cuda_{{dataset.id}}" class="form-label" style="display: flex; align-items: center; margin-right: 10px">Enable CUDA:</label>
+                                        <select class="form-select" id="cuda_{{dataset.id}}" name="cuda_{{dataset.id}}" required style="width: 100px; margin-right: 10px">
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="gen_btn" style="align-content: center">
-                                    <button type="submit" class="btn btn-outline-success" id="GenButton">
-                                        <label id="btext">Generate</label>
+                                <div class="gen_btn"  style="align-content: center">
+                                    <button type="submit" class="btn btn-outline-success" id="GenButton_{{dataset.id}}">
+                                        <label id="btext_{{dataset.id}}">Generate</label>
                                     </button>
                                 </div>
                             </div>
