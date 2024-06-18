@@ -22,12 +22,16 @@ jobs:
         pip install -r requirements.txt
     - name: Install ChromeDriver
       run: |
-        DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)
-        wget "https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip"
-        unzip chromedriver_linux64.zip
-        sudo mv chromedriver /usr/bin/chromedriver
-        sudo chown root:root /usr/bin/chromedriver
-        sudo chmod +x /usr/bin/chromedriver
+        sudo apt-get update
+        sudo apt-get install -y wget unzip xvfb libxi6 libgconf-2-4
+        wget -N http://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
+        unzip chromedriver_linux64.zip -d /usr/local/bin/
+        rm chromedriver_linux64.zip
+    - name: Install Google Chrome
+      run: |
+        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+        rm google-chrome-stable_current_amd64.deb
     - name: Start server
       run: |
         python App/main.py &
