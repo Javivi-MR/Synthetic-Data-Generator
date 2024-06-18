@@ -7,6 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
 
 #Run this file when the server is running (python main.py) and the database is empty
 
@@ -35,8 +36,12 @@ class TestApp(unittest.TestCase):
         self.assertIn(b'Home', response.data)
 
     def test_2_register_page(self):
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
         # Use selenium to fill and submit the register form
-        driver = webdriver.Chrome()
+        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -55,8 +60,12 @@ class TestApp(unittest.TestCase):
         driver.close()
 
     def test_3_login_page(self):
-        # Use selenium to fill and submit the login form
-        driver = webdriver.Chrome()
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+
+        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
         driver.maximize_window()
 
 
@@ -86,8 +95,12 @@ class TestApp(unittest.TestCase):
 
 
     def test_4_logout_page(self):
-        # Use selenium to fill and submit the login form
-        driver = webdriver.Chrome()
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+
+        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -129,7 +142,12 @@ class TestApp(unittest.TestCase):
         self.assertIn(b'About', response.data)
 
     def test_6_generate_page(self):
-        driver = webdriver.Chrome()
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+
+        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
         driver.maximize_window()
 
         #first check you can't access the page without being logged in
@@ -164,7 +182,12 @@ class TestApp(unittest.TestCase):
         driver.close()
 
     def test_7_upload_dataset(self):
-        driver = webdriver.Chrome()
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+
+        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -206,7 +229,12 @@ class TestApp(unittest.TestCase):
         driver.close()
 
     def test_8_delete_dataset(self):
-        driver = webdriver.Chrome()
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+
+        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -258,7 +286,12 @@ class TestApp(unittest.TestCase):
         driver.close()
 
     def test_9_generate_dataset(self):
-        driver = webdriver.Chrome()
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+
+        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -387,7 +420,12 @@ class TestApp(unittest.TestCase):
         driver.close()
 
     def test_10_download_dataset(self):
-        driver = webdriver.Chrome()
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+
+        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -455,7 +493,12 @@ class TestApp(unittest.TestCase):
         driver.close()
 
     def test_11_evaluate_page(self):
-        driver = webdriver.Chrome()
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+
+        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
