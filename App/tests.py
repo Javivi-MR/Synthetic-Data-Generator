@@ -41,7 +41,7 @@ class TestApp(unittest.TestCase):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         # Use selenium to fill and submit the register form
-        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -65,7 +65,7 @@ class TestApp(unittest.TestCase):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
 
-        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)
         driver.maximize_window()
 
 
@@ -100,7 +100,7 @@ class TestApp(unittest.TestCase):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
 
-        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -147,7 +147,7 @@ class TestApp(unittest.TestCase):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
 
-        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)
         driver.maximize_window()
 
         #first check you can't access the page without being logged in
@@ -187,7 +187,7 @@ class TestApp(unittest.TestCase):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
 
-        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -234,7 +234,7 @@ class TestApp(unittest.TestCase):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
 
-        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -291,7 +291,7 @@ class TestApp(unittest.TestCase):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
 
-        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -425,7 +425,7 @@ class TestApp(unittest.TestCase):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
 
-        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -498,7 +498,7 @@ class TestApp(unittest.TestCase):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
 
-        driver = webdriver.Chrome('/home/runner/chromedriver', options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
