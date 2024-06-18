@@ -7,7 +7,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
 
 #Run this file when the server is running (python main.py) and the database is empty
 
@@ -37,8 +38,7 @@ class TestApp(unittest.TestCase):
 
     def test_2_register_page(self):
         # Use selenium to fill and submit the register form
-        service = Service()
-        driver = webdriver.Chrome(service=service)
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -58,8 +58,7 @@ class TestApp(unittest.TestCase):
 
     def test_3_login_page(self):
         # Use selenium to fill and submit the login form
-        service = Service()
-        driver = webdriver.Chrome(service=service)
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
         driver.maximize_window()
 
 
@@ -90,8 +89,7 @@ class TestApp(unittest.TestCase):
 
     def test_4_logout_page(self):
         # Use selenium to fill and submit the login form
-        service = Service()
-        driver = webdriver.Chrome(service=service)
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -133,8 +131,7 @@ class TestApp(unittest.TestCase):
         self.assertIn(b'About', response.data)
 
     def test_6_generate_page(self):
-        service = Service()
-        driver = webdriver.Chrome(service=service)
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
         driver.maximize_window()
 
         #first check you can't access the page without being logged in
@@ -169,8 +166,7 @@ class TestApp(unittest.TestCase):
         driver.close()
 
     def test_7_upload_dataset(self):
-        service = Service()
-        driver = webdriver.Chrome(service=service)
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -212,8 +208,7 @@ class TestApp(unittest.TestCase):
         driver.close()
 
     def test_8_delete_dataset(self):
-        service = Service()
-        driver = webdriver.Chrome(service=service)
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -265,8 +260,7 @@ class TestApp(unittest.TestCase):
         driver.close()
 
     def test_9_generate_dataset(self):
-        service = Service()
-        driver = webdriver.Chrome(service=service)
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -395,8 +389,7 @@ class TestApp(unittest.TestCase):
         driver.close()
 
     def test_10_download_dataset(self):
-        service = Service()
-        driver = webdriver.Chrome(service=service)
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
@@ -464,8 +457,7 @@ class TestApp(unittest.TestCase):
         driver.close()
 
     def test_11_evaluate_page(self):
-        service = Service()
-        driver = webdriver.Chrome(service=service)
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
         driver.maximize_window()
 
         driver.get('http://localhost:5000/register')
