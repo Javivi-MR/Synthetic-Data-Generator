@@ -189,6 +189,8 @@ def generate_id(id):
 
             synthesizer.fit(real_data)
             synthetic_data = synthesizer.sample(int(request.form['rows_' + str(id)]))
+        else:
+            return render_template('error.html', user=current_user, error='Invalid synthetizer')
 
         synthetic_data.to_csv(C.SYNTHETIC_PATH + str(id) + '_s_' + dataset.name, index=False)
         return render_template('showdata.html', id=id, user=current_user ,file_name=dataset.name, real_data=real_data, synthetic_data=synthetic_data, C_SYNTHETIC_PATH=C.SYNTHETIC_PATH, C_PLOT_PATH=C.PLOT_PATH)

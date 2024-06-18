@@ -4,7 +4,6 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 import config as C
 
-
 import os
 
 app = Flask(__name__)
@@ -22,6 +21,7 @@ login_manager.login_view = 'login'
 from routes import *
 
 with app.app_context():
+    from models import Dataset, User
     if not os.path.exists('database.db'):
         db.create_all()
 

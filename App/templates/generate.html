@@ -129,7 +129,7 @@
         </div>
         <!-- Button to upload a dataset -->
         <div class="text-center" style="margin-top: 1.2em;">
-            <a href="/upload" class="btn btn-outline-success" style="font-size: 1.4em;">Upload a dataset</a>
+            <a href="/upload" class="btn btn-outline-success" id="upload" style="font-size: 1.4em;">Upload a dataset</a>
         </div>
         {% else: %}
         <div>
@@ -245,7 +245,7 @@
                             </form>
                             <!-- Form to send the dataset id to the server and delete the dataset -->
                             <form action="/delete/{{dataset.id}}" method="post" style="margin-top: 0">
-                                <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                <button type="submit" id="delete_{{dataset.id}}" class="btn btn-outline-danger">Delete</button>
                             </form>
                         </td>
                     </tr>
@@ -256,7 +256,7 @@
 
             <!-- Button to upload a dataset -->
             <div class="text-center" style="margin-top: 1.4em; margin-bottom: 1.4em;">
-                <a href="/upload" class="btn btn-outline-success" style="font-size: 1.4em;">Upload a dataset</a>
+                <a href="/upload" class="btn btn-outline-success" id="upload" style="font-size: 1.4em;">Upload a dataset</a>
             </div>
             <!-- Section with information about the synthetizers -->
             <div class="alert alert-info" role="alert">

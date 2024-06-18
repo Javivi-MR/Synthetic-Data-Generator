@@ -19,14 +19,14 @@
         </a>
         <!-- 3 options at right of the nav bar -->
         <div class="form-inline">
-            <a href="/" class="btn btn-outline-success apartado" style="font-size: 1.4em">Home</a>
+            <a href="/" class="btn btn-outline-success apartado" id="Home" style="font-size: 1.4em">Home</a>
             {% if user.is_authenticated: %}
-                <a href="/logout" class="btn btn-outline-success apartado" style="font-size: 1.4em">Logout</a>
+                <a href="/logout" class="btn btn-outline-success apartado" id="Logout" style="font-size: 1.4em">Logout</a>
             {% else: %}
-                <a href="/login" class="btn btn-outline-success apartado" style="font-size: 1.4em">Login</a>
+                <a href="/login" class="btn btn-outline-success apartado" id="Login" style="font-size: 1.4em">Login</a>
             {% endif %}
-            <a href="/generate" class="btn btn-outline-success apartado" style="font-size: 1.4em">Generate</a>
-            <a href="/about" class="btn btn-outline-success apartado" style="font-size: 1.4em">About</a>
+            <a href="/generate" class="btn btn-outline-success apartado" id="Generate" style="font-size: 1.4em">Generate</a>
+            <a href="/about" class="btn btn-outline-success apartado" id="About" style="font-size: 1.4em">About</a>
         </div>
     </nav>
 </header>
