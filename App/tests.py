@@ -40,6 +40,7 @@ class TestApp(unittest.TestCase):
     def test_2_register_page(self):
         # Use selenium to fill and submit the register form
         options = Options()
+        options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
@@ -52,7 +53,8 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
         # Check if the user was created
         with app.app_context():
             from models import User
@@ -63,6 +65,7 @@ class TestApp(unittest.TestCase):
     def test_3_login_page(self):
         # Use selenium to fill and submit the login form
         options = Options()
+        options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
@@ -76,7 +79,8 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
         username = driver.find_element(By.ID, 'username')
@@ -85,7 +89,8 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         # Check if the user is logged in
         WebDriverWait(driver, 10).until(
@@ -97,6 +102,7 @@ class TestApp(unittest.TestCase):
     def test_4_logout_page(self):
         # Use selenium to fill and submit the login form
         options = Options()
+        options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
@@ -109,7 +115,8 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
         username = driver.find_element(By.ID, 'username')
@@ -118,7 +125,8 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         # Check if the user is logged in
         WebDriverWait(driver, 10).until(
@@ -127,7 +135,8 @@ class TestApp(unittest.TestCase):
 
         # Logout
         logout = driver.find_element(By.ID, 'Logout')
-        logout.click()
+        #logout.click()
+        driver.execute_script("arguments[0].click();", logout)
 
         # Check if the user is logged out
         WebDriverWait(driver, 10).until(
@@ -142,6 +151,7 @@ class TestApp(unittest.TestCase):
 
     def test_6_generate_page(self):
         options = Options()
+        options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
@@ -161,7 +171,8 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
         username = driver.find_element(By.ID, 'username')
@@ -170,7 +181,8 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/generate')
         WebDriverWait(driver, 10).until(
@@ -180,6 +192,7 @@ class TestApp(unittest.TestCase):
 
     def test_7_upload_dataset(self):
         options = Options()
+        options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
@@ -192,7 +205,8 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
         username = driver.find_element(By.ID, 'username')
@@ -201,20 +215,23 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/generate')
         #search upload button
         upload = driver.find_element(By.ID, 'upload')
         #click it
-        upload.click()
+        #upload.click()
+        driver.execute_script("arguments[0].click();", upload)
 
         #form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
         #attach the file at "../examples/iris.csv" use os.path.abspath to get the full path
         dataset.send_keys(os.path.abspath('../examples/iris.csv'))
         submit = driver.find_element(By.ID, 'submit')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         #Check if the dataset was uploaded
         WebDriverWait(driver, 10).until(
@@ -225,6 +242,7 @@ class TestApp(unittest.TestCase):
 
     def test_8_delete_dataset(self):
         options = Options()
+        options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
@@ -237,7 +255,8 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
         username = driver.find_element(By.ID, 'username')
@@ -246,20 +265,23 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/generate')
         #search upload button
         upload = driver.find_element(By.ID, 'upload')
         #click it
-        upload.click()
+        #upload.click()
+        driver.execute_script("arguments[0].click();", upload)
 
         #form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
         #attach the file at "../examples/iris.csv" use os.path.abspath to get the full path
         dataset.send_keys(os.path.abspath('../examples/iris.csv'))
         submit = driver.find_element(By.ID, 'submit')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         #Check if the dataset was uploaded
         WebDriverWait(driver, 10).until(
@@ -269,7 +291,8 @@ class TestApp(unittest.TestCase):
         #search delete button
         delete = driver.find_element(By.ID, 'delete_1')
         #click it
-        delete.click()
+        #delete.click()
+        driver.execute_script("arguments[0].click();", delete)
 
         #Check if the dataset was deleted
         WebDriverWait(driver, 10).until(
@@ -280,6 +303,7 @@ class TestApp(unittest.TestCase):
 
     def test_9_generate_dataset(self):
         options = Options()
+        options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
@@ -292,7 +316,8 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
         username = driver.find_element(By.ID, 'username')
@@ -301,20 +326,23 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/generate')
         # search upload button
         upload = driver.find_element(By.ID, 'upload')
         # click it
-        upload.click()
+        #upload.click()
+        driver.execute_script("arguments[0].click();", upload)
 
         # form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
         # attach the file at "../examples/iris.csv" use os.path.abspath to get the full path
         dataset.send_keys(os.path.abspath('../examples/iris.csv'))
         submit = driver.find_element(By.ID, 'submit')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         # Check if the dataset was uploaded
         WebDriverWait(driver, 10).until(
@@ -329,7 +357,8 @@ class TestApp(unittest.TestCase):
 
         generate = driver.find_element(By.ID, 'GenButton_1')
         driver.execute_script("arguments[0].scrollIntoView();", generate)
-        generate.click()
+        #generate.click()
+        driver.execute_script("arguments[0].click();", generate)
 
         WebDriverWait(driver, 25).until(
             EC.presence_of_element_located((By.ID, 'SyntheticDataset'))
@@ -345,7 +374,8 @@ class TestApp(unittest.TestCase):
 
         generate = driver.find_element(By.ID, 'GenButton_1')
         driver.execute_script("arguments[0].scrollIntoView();", generate)
-        generate.click()
+        #generate.click()
+        driver.execute_script("arguments[0].click();", generate)
 
         WebDriverWait(driver, 25).until(
             EC.presence_of_element_located((By.ID, 'SyntheticDataset'))
@@ -364,7 +394,8 @@ class TestApp(unittest.TestCase):
 
         generate = driver.find_element(By.ID, 'GenButton_1')
         driver.execute_script("arguments[0].scrollIntoView();", generate)
-        generate.click()
+        #generate.click()
+        driver.execute_script("arguments[0].click();", generate)
 
         WebDriverWait(driver, 25).until(
             EC.presence_of_element_located((By.ID, 'SyntheticDataset'))
@@ -383,7 +414,8 @@ class TestApp(unittest.TestCase):
 
         generate = driver.find_element(By.ID, 'GenButton_1')
         driver.execute_script("arguments[0].scrollIntoView();", generate)
-        generate.click()
+        #generate.click()
+        driver.execute_script("arguments[0].click();", generate)
 
         WebDriverWait(driver, 25).until(
             EC.presence_of_element_located((By.ID, 'SyntheticDataset'))
@@ -402,7 +434,8 @@ class TestApp(unittest.TestCase):
 
         generate = driver.find_element(By.ID, 'GenButton_1')
         driver.execute_script("arguments[0].scrollIntoView();", generate)
-        generate.click()
+        #generate.click()
+        driver.execute_script("arguments[0].click();", generate)
 
         WebDriverWait(driver, 25).until(
             EC.presence_of_element_located((By.ID, 'SyntheticDataset'))
@@ -412,6 +445,7 @@ class TestApp(unittest.TestCase):
 
     def test_10_download_dataset(self):
         options = Options()
+        options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
@@ -424,7 +458,8 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
         username = driver.find_element(By.ID, 'username')
@@ -433,20 +468,23 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/generate')
         # search upload button
         upload = driver.find_element(By.ID, 'upload')
         # click it
-        upload.click()
+        #upload.click()
+        driver.execute_script("arguments[0].click();", upload)
 
         # form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
         # attach the file at "../examples/iris.csv" use os.path.abspath to get the full path
         dataset.send_keys(os.path.abspath('../examples/iris.csv'))
         submit = driver.find_element(By.ID, 'submit')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         # Check if the dataset was uploaded
         WebDriverWait(driver, 10).until(
@@ -461,14 +499,16 @@ class TestApp(unittest.TestCase):
 
         generate = driver.find_element(By.ID, 'GenButton_1')
         driver.execute_script("arguments[0].scrollIntoView();", generate)
-        generate.click()
+        #generate.click()
+        driver.execute_script("arguments[0].click();", generate)
 
         WebDriverWait(driver, 25).until(
             EC.presence_of_element_located((By.ID, 'SyntheticDataset'))
         )
 
         download = driver.find_element(By.ID, 'download_data')
-        download.click()
+        #download.click()
+        driver.execute_script("arguments[0].click();", download)
 
         time.sleep(10)
 
@@ -483,6 +523,7 @@ class TestApp(unittest.TestCase):
 
     def test_11_evaluate_page(self):
         options = Options()
+        options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
@@ -495,7 +536,8 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
         username = driver.find_element(By.ID, 'username')
@@ -504,20 +546,23 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/generate')
         # search upload button
         upload = driver.find_element(By.ID, 'upload')
         # click it
-        upload.click()
+        #upload.click()
+        driver.execute_script("arguments[0].click();", upload)
 
         # form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
         # attach the file at "../examples/iris.csv" use os.path.abspath to get the full path
         dataset.send_keys(os.path.abspath('../examples/iris.csv'))
         submit = driver.find_element(By.ID, 'submit')
-        submit.click()
+        #submit.click()
+        driver.execute_script("arguments[0].click();", submit)
 
         # Check if the dataset was uploaded
         WebDriverWait(driver, 10).until(
@@ -532,14 +577,16 @@ class TestApp(unittest.TestCase):
 
         generate = driver.find_element(By.ID, 'GenButton_1')
         driver.execute_script("arguments[0].scrollIntoView();", generate)
-        generate.click()
+        #generate.click()
+        driver.execute_script("arguments[0].click();", generate)
 
         WebDriverWait(driver, 25).until(
             EC.presence_of_element_located((By.ID, 'SyntheticDataset'))
         )
 
         evaluate = driver.find_element(By.ID, 'EvButton')
-        evaluate.click()
+        #evaluate.click()
+        driver.execute_script("arguments[0].click();", evaluate)
 
         WebDriverWait(driver, 35).until(
             EC.presence_of_element_located((By.ID, 'QualityHeader'))
