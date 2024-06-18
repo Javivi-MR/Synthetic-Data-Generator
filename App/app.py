@@ -4,6 +4,7 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 import config as C
 
+
 import os
 
 app = Flask(__name__)
@@ -23,3 +24,10 @@ from routes import *
 with app.app_context():
     if not os.path.exists('database.db'):
         db.create_all()
+
+    datasets = Dataset.query.all()
+    for dataset in datasets:
+        if not User.query.get(dataset.user_id) or not os.path.exists(dataset.path):
+            db.session.delete(dataset)
+    db.session.commit()
+
