@@ -159,14 +159,12 @@
                         <th scope="row" style="text-align: center;">{{dataset.id}}</th>
                         <td style="text-align: center;">{{dataset.name}}</td>
                         <td style="display: flex; justify-content: center; align-items: center;">
-                            <!-- Form to send the dataset id to the server and generate synthetic data -->
                             <form action="/generate/{{dataset.id}}" method="post" style="margin-right: 10px; margin-top: 0; display: flex">
                             <div id="form_container_{{dataset.id}}" style="display: flex">
                                 <div id="form_container_options_{{dataset.id}}">
                                     <div id="options_1_{{dataset.id}}" style="display: flex;">
                                         <label for="rows_{{dataset.id}}" class="form-label" style="display: flex; align-items: center; margin-right: 10px">Number of rows:</label>
                                         <input class="form-control" type="number" id="rows_{{dataset.id}}" min="1" name="rows_{{dataset.id}}" required style="width: 100px; margin-right: 10px">
-                                        <!-- Select the type of synthetizer for the ones SDV offers -->
                                         <label for="synthetizer_{{dataset.id}}" class="form-label" style="display: flex; align-items: center; margin-right: 10px">Synthetizer:</label>
                                         <select class="form-select" id="synthetizer_{{dataset.id}}" name="synthetizer_{{dataset.id}}" required style="width: 170px; margin-right: 10px">
                                             <option value="fast_ml">Fast ML</option>
@@ -177,23 +175,19 @@
                                         </select>
                                     </div>
                                     <div id="options_2_{{dataset.id}}" style="display: flex; margin-top: 1em">
-                                        <!-- input for enforce_min_max_values -->
                                         <label for="enforce_min_max_values_{{dataset.id}}" id="enforce_min_max_valuesl_{{dataset.id}}" class="form-label" style="display: none; align-items: center; margin-right: 10px">Enforce min max values:</label>
                                         <select class="form-select" id="enforce_min_max_values_{{dataset.id}}" name="enforce_min_max_values_{{dataset.id}}" required style="width: 100px; margin-right: 10px; display: none">
                                             <option value="Yes">Yes</option>
                                             <option value="No">No</option>
                                         </select>
-                                        <!-- input for enforce_rounding -->
                                         <label for="enforce_rounding_{{dataset.id}}" id="enforce_roundingl_{{dataset.id}}" class="form-label" style="display: none; align-items: center; margin-right: 10px">Enforce rounding:</label>
                                         <select class="form-select" id="enforce_rounding_{{dataset.id}}" name="enforce_rounding_{{dataset.id}}" required style="width: 100px; margin-right: 10px; display: none">
                                             <option value="Yes">Yes</option>
                                             <option value="No">No</option>
                                         </select>
-                                        <!-- input for epochs -->
                                         <label for="epochs_{{dataset.id}}" class="form-label" id="epochsl_{{dataset.id}}" style="display: none; align-items: center; margin-right: 10px">Epochs:</label>
                                         <input class="form-control" type="number" id="epochs_{{dataset.id}}" name="epochs_{{dataset.id}}" min="1" required style="width: 100px; margin-right: 10px; display: none" value="300">
                                     </div>
-                                    <!-- Now we have to show all the columns of the dataset to select numerical_distributions for each one, this will be a select with the options of 'norm' 'beta', 'truncnorm', 'uniform', 'gamma' or 'gaussian_kde' -->
                                     <p id="num_dis_txt_{{dataset.id}}" style="display: none; margin-top: 1em">Select for each column the numerical distribution: </p>
                                     <div id="options_3_{{dataset.id}}" style="display: none; flex-direction: column; ">
                                         <div class="columns" style="display: flex; margin-top: 0.8em;">
@@ -208,7 +202,6 @@
                                                 <option value="gamma">Gamma</option>
                                                 <option value="gaussian_kde">Gaussian KDE</option>
                                             </select>
-                                            <!-- every 3 columns we add a break -->
                                             {% if loop.index % 3 == 0 %}
                                                 </div>
                                                 <div class="columns" style="display: flex; margin-top: 0.8em;">
@@ -217,7 +210,6 @@
                                         </div>
                                     </div>
                                     <div id="options_4_{{dataset.id}}" style="display: none; margin-top: 1em;">
-                                        <!-- Label and select field of default_distribution -->
                                         <label for="default_distribution_{{dataset.id}}" class="form-label" style="display: flex; align-items: center; margin-right: 10px">Default distribution:</label>
                                         <select class="form-select" id="default_distribution_{{dataset.id}}" name="default_distribution_{{dataset.id}}" required style="width: 145px; margin-right: 10px">
                                             <option value="norm">Norm</option>
@@ -243,7 +235,6 @@
                                 </div>
                             </div>
                             </form>
-                            <!-- Form to send the dataset id to the server and delete the dataset -->
                             <form action="/delete/{{dataset.id}}" method="post" style="margin-top: 0">
                                 <button type="submit" id="delete_{{dataset.id}}" class="btn btn-outline-danger">Delete</button>
                             </form>
@@ -254,11 +245,9 @@
             </table>
 
 
-            <!-- Button to upload a dataset -->
             <div class="text-center" style="margin-top: 1.4em; margin-bottom: 1.4em;">
                 <a href="/upload" class="btn btn-outline-success" id="upload" style="font-size: 1.4em;">Upload a dataset</a>
             </div>
-            <!-- Section with information about the synthetizers -->
             <div class="alert alert-info" role="alert">
                 <h2 class="alert-heading">Synthetizers</h2>
                 <p style="text-align: center;">The Synthetic Data Generator offers different synthetizers to generate synthetic data. The synthetizers available are:</p>

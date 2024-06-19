@@ -220,7 +220,6 @@ def upload():
         else:
             id = 1
 
-        # Especifica la ubicación donde deseas almacenar el archivo
         file.save(C.DATASET_PATH + str(id) + '_' + file.filename)
         dataset = Dataset(id=id, name=file.filename, path=C.DATASET_PATH + str(id) + '_' + file.filename, user_id=current_user.id)
         db.session.add(dataset)
@@ -277,6 +276,7 @@ def evaluate(id):
                     if real_data[real_data.columns[i]].dtype in ['int64', 'float64'] and
                     real_data[real_data.columns[j]].dtype in ['int64', 'float64']]
 
+    #plots with dispersion
     for column1, column2 in column_pairs:
         plt.figure(figsize=(10, 6))
         plt.scatter(real_data[column1], real_data[column2], color='blue', alpha=0.5, label='Real Data')
@@ -287,7 +287,7 @@ def evaluate(id):
         plt.savefig(C.PLOT_PATH + str(id) + column1 + column2 + '.png')
         plt.close()
 
-    #make plot with comparison of correlation lines between real and synthetic data
+    #plots with regression line
     for column1, column2 in column_pairs:
         plt.figure(figsize=(10, 6))
         plt.scatter(real_data[column1], real_data[column2], color='blue', alpha=0.5, label='Real Data')

@@ -39,7 +39,6 @@ class TestApp(unittest.TestCase):
         from utils import build_system, get_regression_line, load_dataset, authenticate_user
         from app import bcrypt
 
-        #build_system
         build_system()
 
         with app.app_context():
@@ -60,9 +59,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(loaded_dataset.path, 'test')
         self.assertEqual(loaded_dataset.user_id, 1)
 
-        #we are going to test if we are calculating properly the statistics of the dataset
-        #we are going to use the iris dataset
-        script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+        script_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(script_dir)
         examples_dir = os.path.join(root_dir, 'examples')
         iris = pd.read_csv(os.path.join(examples_dir, 'iris.csv'))
@@ -76,7 +73,6 @@ class TestApp(unittest.TestCase):
         self.assertEqual(round(iris['petal_width'].mean(),2), 1.20)
         self.assertEqual(round(iris['petal_width'].std(),2), 0.76)
 
-        #now correlation
         self.assertEqual(round(iris['sepal_length'].corr(iris['sepal_width']),2), -0.11)
         self.assertEqual(round(iris['sepal_length'].corr(iris['petal_length']),2), 0.87)
         self.assertEqual(round(iris['sepal_length'].corr(iris['petal_width']),2), 0.82)
@@ -84,10 +80,8 @@ class TestApp(unittest.TestCase):
         self.assertEqual(round(iris['sepal_width'].corr(iris['petal_width']),2), -0.36)
         self.assertEqual(round(iris['petal_length'].corr(iris['petal_width']),2), 0.96)
 
-        #now covariance
         self.assertEqual(round(iris['sepal_length'].cov(iris['sepal_width']),2), -0.04)
 
-        #now the regression line y = a + bx
         x = iris['sepal_length']
         y = iris['sepal_width']
         slope, intercept = get_regression_line(x, y)
@@ -103,7 +97,6 @@ class TestApp(unittest.TestCase):
         self.assertIn(b'Home', response.data)
 
     def test_2_register_page(self):
-        # Use selenium to fill and submit the register form
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
@@ -118,9 +111,7 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
-        # Check if the user was created
         with app.app_context():
             from models import User
             user = User.query.filter_by(username='test').first()
@@ -128,7 +119,6 @@ class TestApp(unittest.TestCase):
         driver.close()
 
     def test_3_login_page(self):
-        # Use selenium to fill and submit the login form
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
@@ -144,7 +134,6 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
@@ -154,10 +143,8 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
-        # Check if the user is logged in
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, 'Logout'))
         )
@@ -165,7 +152,6 @@ class TestApp(unittest.TestCase):
 
 
     def test_4_logout_page(self):
-        # Use selenium to fill and submit the login form
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
@@ -180,7 +166,6 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
@@ -190,20 +175,15 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
-        # Check if the user is logged in
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, 'Logout'))
         )
 
-        # Logout
         logout = driver.find_element(By.ID, 'Logout')
-        #logout.click()
         driver.execute_script("arguments[0].click();", logout)
 
-        # Check if the user is logged out
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, 'Login'))
         )
@@ -222,13 +202,11 @@ class TestApp(unittest.TestCase):
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
         driver.maximize_window()
 
-        #first check you can't access the page without being logged in
         driver.get('http://localhost:5000/generate')
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, 'Login'))
         )
 
-        #second check you can access the page after logging in
         driver.get('http://localhost:5000/register')
         username = driver.find_element(By.ID, 'username')
         username.send_keys('test')
@@ -236,7 +214,6 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
@@ -246,7 +223,6 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/generate')
@@ -270,7 +246,6 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
@@ -280,17 +255,12 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/generate')
-        #search upload button
         upload = driver.find_element(By.ID, 'upload')
-        #click it
-        #upload.click()
         driver.execute_script("arguments[0].click();", upload)
 
-        #form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
         script_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(script_dir)
@@ -298,10 +268,8 @@ class TestApp(unittest.TestCase):
         dataset.send_keys(os.path.join(examples_dir, 'iris.csv'))
 
         submit = driver.find_element(By.ID, 'submit')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
-        #Check if the dataset was uploaded
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, 'form_container_1'))
         )
@@ -323,7 +291,6 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
@@ -333,39 +300,28 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/generate')
-        #search upload button
         upload = driver.find_element(By.ID, 'upload')
-        #click it
-        #upload.click()
         driver.execute_script("arguments[0].click();", upload)
 
-        #form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
-        script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+        script_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(script_dir)
-        examples_dir = os.path.join(root_dir, 'examples')  # Get the path to the 'examples' directory
+        examples_dir = os.path.join(root_dir, 'examples')
         dataset.send_keys(os.path.join(examples_dir, 'iris.csv'))
 
         submit = driver.find_element(By.ID, 'submit')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
-        #Check if the dataset was uploaded
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, 'form_container_1'))
         )
 
-        #search delete button
         delete = driver.find_element(By.ID, 'delete_1')
-        #click it
-        #delete.click()
         driver.execute_script("arguments[0].click();", delete)
 
-        #Check if the dataset was deleted
         WebDriverWait(driver, 10).until(
             EC.invisibility_of_element_located((By.ID, 'form_container_1'))
         )
@@ -387,7 +343,6 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
@@ -397,28 +352,21 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/generate')
-        # search upload button
         upload = driver.find_element(By.ID, 'upload')
-        # click it
-        #upload.click()
         driver.execute_script("arguments[0].click();", upload)
 
-        # form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
-        script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+        script_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(script_dir)
-        examples_dir = os.path.join(root_dir, 'examples')  # Get the path to the 'examples' directory
+        examples_dir = os.path.join(root_dir, 'examples')
         dataset.send_keys(os.path.join(examples_dir, 'iris.csv'))
 
         submit = driver.find_element(By.ID, 'submit')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
-        # Check if the dataset was uploaded
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, 'form_container_1'))
         )
@@ -431,7 +379,6 @@ class TestApp(unittest.TestCase):
 
         generate = driver.find_element(By.ID, 'GenButton_1')
         driver.execute_script("arguments[0].scrollIntoView();", generate)
-        #generate.click()
         driver.execute_script("arguments[0].click();", generate)
 
         WebDriverWait(driver, 25).until(
@@ -448,7 +395,6 @@ class TestApp(unittest.TestCase):
 
         generate = driver.find_element(By.ID, 'GenButton_1')
         driver.execute_script("arguments[0].scrollIntoView();", generate)
-        #generate.click()
         driver.execute_script("arguments[0].click();", generate)
 
         WebDriverWait(driver, 25).until(
@@ -468,7 +414,6 @@ class TestApp(unittest.TestCase):
 
         generate = driver.find_element(By.ID, 'GenButton_1')
         driver.execute_script("arguments[0].scrollIntoView();", generate)
-        #generate.click()
         driver.execute_script("arguments[0].click();", generate)
 
         WebDriverWait(driver, 25).until(
@@ -488,7 +433,6 @@ class TestApp(unittest.TestCase):
 
         generate = driver.find_element(By.ID, 'GenButton_1')
         driver.execute_script("arguments[0].scrollIntoView();", generate)
-        #generate.click()
         driver.execute_script("arguments[0].click();", generate)
 
         WebDriverWait(driver, 25).until(
@@ -508,7 +452,6 @@ class TestApp(unittest.TestCase):
 
         generate = driver.find_element(By.ID, 'GenButton_1')
         driver.execute_script("arguments[0].scrollIntoView();", generate)
-        #generate.click()
         driver.execute_script("arguments[0].click();", generate)
 
         WebDriverWait(driver, 25).until(
@@ -532,7 +475,6 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
@@ -542,28 +484,22 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/generate')
-        # search upload button
+
         upload = driver.find_element(By.ID, 'upload')
-        # click it
-        #upload.click()
         driver.execute_script("arguments[0].click();", upload)
 
-        # form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
-        script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+        script_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(script_dir)
-        examples_dir = os.path.join(root_dir, 'examples')  # Get the path to the 'examples' directory
+        examples_dir = os.path.join(root_dir, 'examples')
         dataset.send_keys(os.path.join(examples_dir, 'iris.csv'))
 
         submit = driver.find_element(By.ID, 'submit')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
-        # Check if the dataset was uploaded
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, 'form_container_1'))
         )
@@ -576,14 +512,12 @@ class TestApp(unittest.TestCase):
 
         generate = driver.find_element(By.ID, 'GenButton_1')
         driver.execute_script("arguments[0].scrollIntoView();", generate)
-        #generate.click()
         driver.execute_script("arguments[0].click();", generate)
 
         WebDriverWait(driver, 25).until(
             EC.presence_of_element_located((By.ID, 'SyntheticDataset'))
         )
 
-        #check if the link of the download button exists!!
         download = driver.find_element(By.ID, 'download_data')
 
         download_link = download.get_attribute('href')
@@ -609,7 +543,6 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'submit')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/login')
@@ -619,28 +552,21 @@ class TestApp(unittest.TestCase):
         password.send_keys('test')
 
         submit = driver.find_element(By.ID, 'loginb')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
         driver.get('http://localhost:5000/generate')
-        # search upload button
         upload = driver.find_element(By.ID, 'upload')
-        # click it
-        #upload.click()
         driver.execute_script("arguments[0].click();", upload)
 
-        # form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
-        script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+        script_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(script_dir)
-        examples_dir = os.path.join(root_dir, 'examples')  # Get the path to the 'examples' directory
+        examples_dir = os.path.join(root_dir, 'examples')
         dataset.send_keys(os.path.join(examples_dir, 'iris.csv'))
 
         submit = driver.find_element(By.ID, 'submit')
-        #submit.click()
         driver.execute_script("arguments[0].click();", submit)
 
-        # Check if the dataset was uploaded
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, 'form_container_1'))
         )
@@ -653,7 +579,6 @@ class TestApp(unittest.TestCase):
 
         generate = driver.find_element(By.ID, 'GenButton_1')
         driver.execute_script("arguments[0].scrollIntoView();", generate)
-        #generate.click()
         driver.execute_script("arguments[0].click();", generate)
 
         WebDriverWait(driver, 25).until(
@@ -661,7 +586,6 @@ class TestApp(unittest.TestCase):
         )
 
         evaluate = driver.find_element(By.ID, 'EvButton')
-        #evaluate.click()
         driver.execute_script("arguments[0].click();", evaluate)
 
         WebDriverWait(driver, 35).until(

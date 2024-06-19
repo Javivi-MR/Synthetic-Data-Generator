@@ -51,9 +51,9 @@
             {% endfor %}
         </table>
     </div>
-    <!-- make a button to download the synthetic data -->
+
     <a href=".{{C_SYNTHETIC_PATH + id}}_s_{{file_name}}" id="download_data" class="btn btn-outline-success" style="font-size: 1.4em;">Download synthetic data</a>
-    <!-- form to compare the data -->
+
     <form action="/evaluate/{{id}}" method="post">
         <button type="submit" class="btn btn-success" id="EvButton" style="margin-bottom:1em; align-items: center; justify-content: center; display: flex;">
             <label id="btext">Evaluate</label>

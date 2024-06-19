@@ -8,15 +8,12 @@
 {% block body %}
 <div class="content">
     <h1 style="margin-top: 20px; color: #198754; text-decoration-line: underline;" id="QualityHeader">Synthetic data quality</h1>
-    <!-- we have to show rows of  3-4 plots with a descriction bellow of it showing the data type-->
     <h4 style="margin-top: 20px">The evaluation process done by SDMetrics gives a similarity score of {{(score*100)|round(4)}}%</h4>
     <h1 style="margin-top: 20px; color: #198754; text-decoration-line: underline;">Columns comparison and quality</h1>
-    <!-- parragraph with the description of the columns comparison -->
     <p style="margin-top: 20px; text-align: center; width: 70em">In the following buttons you can see the similarity between the real and synthetic data of each column. When you click on a button, a pop-up window will show you a plot with the similarity between the real and synthetic data of that column. The data type of the column is also shown below the plot.</p>
 
     <div class="ColumnComparison">
         <div class="row" style="margin-bottom: 2em; margin-top: 1em">
-            <!-- Now we need to make rows of 3 buttons, 1 button per column, and when you hit the button a little window pop-up an show the plot and information abaout the column also you can close the window-->
             {% for column in real_data.columns %}
             <div class="col" style="display: grid; justify-content: center; align-items: center">
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#{{id + column}}" style="width: 9em;">
@@ -32,15 +29,12 @@
                             <div class="modal-body">
                                 <img src=".{{C_PLOT_PATH + id + column}}.png" alt="Distribution graphic on attribute {{column}}" style="width: 100%">
                                 <p style="text-align: left; margin-left: 2em;"><b> Data type:</b> <span style="color: black; text-decoration-line: underline">{{ real_data[column].dtype }}</span></p>
-                                <!-- if the data type is numeric, we have to show the mean and the standard deviation of the original data vs the synthetic data. Truncate to show only 2 decimals -->
-                                <!-- put mean real data bold and color purpleblack, then the result without any style. and in synthetic data put the mean bold and color cool cyan, then the result without any style -->
                                 {% if real_data[column].dtype == 'int64' or real_data[column].dtype == 'float64' %}
                                     <p style="text-align: left; margin-left: 2em;color: #450d45;"><b> Mean real data: </b><span style="color: black; text-decoration-line: underline ">{{ real_data[column].mean()|round(4) }}</span></p>
                                     <p style="text-align: left; margin-left: 2em;color: #10878f;"><b>Mean synthetic data: </b><span style="color: black; text-decoration-line: underline ">{{ synthetic_data[column].mean()|round(4) }}</span></p>
                                     <p style="text-align: left; margin-left: 2em;color: #450d45;"><b>Standard deviation real data: </b><span style="color: black; text-decoration-line: underline ">{{ real_data[column].std()|round(4) }}</span></p>
                                     <p style="text-align: left; margin-left: 2em;color: #10878f;"><b>Standard deviation synthetic data: </b><span style="color: black; text-decoration-line: underline ">{{ synthetic_data[column].std()|round(4) }}</span></p>
                                 {% endif %}
-                                <!-- if the data type is object, we have to show the mode -->
                                 {% if real_data[column].dtype == 'object' %}
                                     <p style="text-align: left; margin-left: 2em;color: #450d45;"><b>Mode real data:</b> <span style="color: black; text-decoration-line: underline ">{{ real_data[column].mode()[0] }}</span></p>
                                     <p style="text-align: left; margin-left: 2em;color: #10878f;"><b>Mode synthetic data:</b> <span style="color: black; text-decoration-line: underline ">{{ synthetic_data[column].mode()[0] }}</span></p>
@@ -50,10 +44,8 @@
                     </div>
                 </div>
             </div>
-            <!-- if there are 4 buttons already or the last button we have to close the row -->
             {% if loop.index % 4 == 0 or loop.last %}
                 </div>
-            <!-- if there is more columns we have to make a new row -->
                 {% if loop.index < real_data.columns|length %}
                     <div class="row" style="margin-top: 2em">
                 {% endif %}
@@ -62,7 +54,6 @@
     </div>
     <p style="margin-top: 20px; text-align: center; width: 70em">In the following image you can see the similarity score that SDMetrics gives to each column. The score ranges from 0 to 1, where 0 indicates no similarity and 1 indicates perfect similarity. KSComplement classifies the numerical columns, while TVComplement classifies the categorical columns.</p>
     <img src=".{{C_PLOT_PATH + id}}column_shapes.png" alt="column shapes" style="width: 35em">
-        <!-- Similar set of buttons as above,but with pairs of numeric columns and if you click the button it will show covariance of both columns -->
     <h1 style="margin-top: 20px; color: #198754; text-decoration-line: underline;">Covariance comparison</h1>
     <p style="margin-top: 20px; text-align: center; width: 70em">In the following buttons you can see the covariance between the real and synthetic data of each pair of numeric columns. When you click on a button, a pop-up window will show you a plot with the covariance between the real and synthetic data of that pair of columns.</p>
 
@@ -98,7 +89,6 @@
     </div>
     <p style="margin-top: 20px; text-align: center; width: 70em">In the following image you can see the similarity score and numerical correlation that SDMetrics gives to each pair column. The score ranges from 0 to 1, where 0 indicates no similarity and 1 indicates perfect similarity.</p>
     <img src=".{{C_PLOT_PATH + id}}column_pair_trends.png" alt="column shapes" style="width: 35em">
-        <!-- we have to calculate pearson cofficient r and the line y = a + bx, calculate a and b, r = sxy/sx*sy and b= sxy/s^2x a=av(y)-b*av(x) -->
     <h1 style="margin-top: 20px; color: #198754; text-decoration-line: underline;">Regression comparison</h1>
     <p style="margin-top: 20px; text-align: center; width: 70em">In the following buttons you can see the regression between the real and synthetic data of each pair of numeric columns. When you click on a button, a pop-up window will show you a plot with the regression between the real and synthetic data of that pair of columns.</p>
     <div class="RegressionComparison">
