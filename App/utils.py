@@ -1,6 +1,7 @@
 import os
 import numpy as np
-from models import Dataset
+from models import Dataset, User
+from app import bcrypt
 import config as C
 
 def build_system():
@@ -17,3 +18,9 @@ def get_regression_line(x, y):
 
 def load_dataset(dataset_id):
     return Dataset.query.get(int(dataset_id))
+
+def authenticate_user(username, password):
+    user = User.query.filter_by(username=username).first()
+    if user and bcrypt.check_password_hash(user.password, password):
+        return user
+    return None

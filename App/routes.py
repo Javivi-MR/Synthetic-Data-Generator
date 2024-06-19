@@ -2,7 +2,7 @@ from flask import render_template, url_for, request, redirect
 from app import app, db
 from models import User, Dataset
 from forms import Register, Login
-from utils import build_system, load_dataset
+from utils import build_system, load_dataset, authenticate_user
 from flask_login import login_user, login_required, logout_user, current_user
 import pandas as pd
 import numpy as np
@@ -21,14 +21,12 @@ def index():
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    from app import bcrypt
     loginform = Login()
     if loginform.validate_on_submit():
-        user = User.query.filter_by(username=loginform.username.data).first()
+        user = authenticate_user(loginform.username.data, loginform.password.data)
         if user:
-            if bcrypt.check_password_hash(user.password, loginform.password.data):
-                login_user(user)
-                return redirect(url_for('index'))
+            login_user(user)
+            return redirect(url_for('index'))
         return render_template('error.html', user=current_user, error='Invalid username or password')
     return render_template('login.html', form=loginform, user=current_user)
 
@@ -224,7 +222,6 @@ def upload():
 
         # Especifica la ubicación donde deseas almacenar el archivo
         file.save(C.DATASET_PATH + str(id) + '_' + file.filename)
-
         dataset = Dataset(id=id, name=file.filename, path=C.DATASET_PATH + str(id) + '_' + file.filename, user_id=current_user.id)
         db.session.add(dataset)
         db.session.commit()

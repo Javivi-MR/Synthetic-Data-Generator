@@ -11,6 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
+import pandas as pd
 
 #Run this file when the server is running (python main.py) and the database is empty
 
@@ -32,6 +33,76 @@ class TestApp(unittest.TestCase):
                 db.session.delete(user)
 
             db.session.commit()
+
+    def test_unit(self):
+        from models import User, Dataset
+        from utils import build_system, get_regression_line, load_dataset, authenticate_user
+        from app import bcrypt
+
+        #build_system
+        build_system()
+
+        #get_regression_line
+        x = [1, 2, 3, 4, 5]
+        y = [1, 2, 3, 4, 5]
+        slope, intercept = get_regression_line(x, y)
+        self.assertEqual(slope, 1)
+        self.assertEqual(round(intercept,10), 0)
+
+        with app.app_context():
+            user = User(username='test', password=bcrypt.generate_password_hash('test'))
+            db.session.add(user)
+            db.session.commit()
+            dataset = Dataset(name='test', path='test', user_id=1)
+            db.session.add(dataset)
+            db.session.commit()
+
+            authenticated_user = authenticate_user('test', 'test')
+            loaded_dataset = load_dataset(1)
+
+        self.assertEqual(authenticated_user.username, 'test')
+        self.assertTrue(bcrypt.check_password_hash(authenticated_user.password, 'test'))
+
+        self.assertEqual(loaded_dataset.name, 'test')
+        self.assertEqual(loaded_dataset.path, 'test')
+        self.assertEqual(loaded_dataset.user_id, 1)
+
+        #we are going to test if we are calculating properly the statistics of the dataset
+        #we are going to use the iris dataset
+        script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+        root_dir = os.path.dirname(script_dir)
+        examples_dir = os.path.join(root_dir, 'examples')
+        iris = pd.read_csv(os.path.join(examples_dir, 'iris.csv'))
+
+        self.assertEqual(round(iris['sepal_length'].mean(),2), 5.84)
+        self.assertEqual(round(iris['sepal_length'].std(),2), 0.83)
+        self.assertEqual(round(iris['sepal_width'].mean(),2), 3.05)
+        self.assertEqual(round(iris['sepal_width'].std(),2), 0.43)
+        self.assertEqual(round(iris['petal_length'].mean(),2), 3.76)
+        self.assertEqual(round(iris['petal_length'].std(),2), 1.76)
+        self.assertEqual(round(iris['petal_width'].mean(),2), 1.20)
+        self.assertEqual(round(iris['petal_width'].std(),2), 0.76)
+
+        #now correlation
+        self.assertEqual(round(iris['sepal_length'].corr(iris['sepal_width']),2), -0.11)
+        self.assertEqual(round(iris['sepal_length'].corr(iris['petal_length']),2), 0.87)
+        self.assertEqual(round(iris['sepal_length'].corr(iris['petal_width']),2), 0.82)
+        self.assertEqual(round(iris['sepal_width'].corr(iris['petal_length']),2), -0.42)
+        self.assertEqual(round(iris['sepal_width'].corr(iris['petal_width']),2), -0.36)
+        self.assertEqual(round(iris['petal_length'].corr(iris['petal_width']),2), 0.96)
+
+        #now covariance
+        self.assertEqual(round(iris['sepal_length'].cov(iris['sepal_width']),2), -0.04)
+
+        #now the regression line y = a + bx
+        x = iris['sepal_length']
+        y = iris['sepal_width']
+        slope, intercept = get_regression_line(x, y)
+        self.assertEqual(round((iris['sepal_width'].mean() - (iris['sepal_length'].cov(iris['sepal_width']) / (iris['sepal_length'].std()**2) * iris['sepal_length'].mean())),2), round(intercept,2))
+        self.assertEqual(round((iris['sepal_length'].cov(iris['sepal_width']) / iris['sepal_length'].std() ** 2),2), round(slope,2))
+
+
+
 
     def test_1_home_page(self):
         response = self.app.get('/', follow_redirects=True)
@@ -229,13 +300,9 @@ class TestApp(unittest.TestCase):
         #form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        print(script_dir)
         root_dir = os.path.dirname(script_dir)
-        print(root_dir)
         examples_dir = os.path.join(root_dir, 'examples')
-        print(examples_dir)
         dataset.send_keys(os.path.join(examples_dir, 'iris.csv'))
-        print(os.path.join(examples_dir, 'iris.csv'))
 
         submit = driver.find_element(By.ID, 'submit')
         #submit.click()
