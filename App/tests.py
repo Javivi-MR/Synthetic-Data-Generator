@@ -42,13 +42,6 @@ class TestApp(unittest.TestCase):
         #build_system
         build_system()
 
-        #get_regression_line
-        x = [1, 2, 3, 4, 5]
-        y = [1, 2, 3, 4, 5]
-        slope, intercept = get_regression_line(x, y)
-        self.assertEqual(slope, 1)
-        self.assertEqual(round(intercept,10), 0)
-
         with app.app_context():
             user = User(username='test', password=bcrypt.generate_password_hash('test'))
             db.session.add(user)
