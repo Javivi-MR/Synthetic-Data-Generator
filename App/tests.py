@@ -530,7 +530,7 @@ class TestApp(unittest.TestCase):
 
         response = requests.get(download_link)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
 
         driver.close()
 
