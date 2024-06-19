@@ -228,7 +228,10 @@ class TestApp(unittest.TestCase):
         #form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
         #attach the file at "../examples/iris.csv" use os.path.abspath to get the full path
-        dataset.send_keys(os.path.abspath('../examples/iris.csv'))
+        #dataset.send_keys(os.path.abspath('../examples/iris.csv'))
+        script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+        file_path = os.path.join(script_dir, '../examples/iris.csv')  # Construct the path to the iris.csv file
+        dataset.send_keys(file_path)
         submit = driver.find_element(By.ID, 'submit')
         #submit.click()
         driver.execute_script("arguments[0].click();", submit)
@@ -278,7 +281,10 @@ class TestApp(unittest.TestCase):
         #form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
         #attach the file at "../examples/iris.csv" use os.path.abspath to get the full path
-        dataset.send_keys(os.path.abspath('../examples/iris.csv'))
+        #dataset.send_keys(os.path.abspath('../examples/iris.csv'))
+        script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+        file_path = os.path.join(script_dir, '../examples/iris.csv')  # Construct the path to the iris.csv file
+        dataset.send_keys(file_path)
         submit = driver.find_element(By.ID, 'submit')
         #submit.click()
         driver.execute_script("arguments[0].click();", submit)
@@ -339,7 +345,10 @@ class TestApp(unittest.TestCase):
         # form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
         # attach the file at "../examples/iris.csv" use os.path.abspath to get the full path
-        dataset.send_keys(os.path.abspath('../examples/iris.csv'))
+        #dataset.send_keys(os.path.abspath('../examples/iris.csv'))
+        script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+        file_path = os.path.join(script_dir, '../examples/iris.csv')  # Construct the path to the iris.csv file
+        dataset.send_keys(file_path)
         submit = driver.find_element(By.ID, 'submit')
         #submit.click()
         driver.execute_script("arguments[0].click();", submit)
@@ -481,7 +490,10 @@ class TestApp(unittest.TestCase):
         # form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
         # attach the file at "../examples/iris.csv" use os.path.abspath to get the full path
-        dataset.send_keys(os.path.abspath('../examples/iris.csv'))
+        #dataset.send_keys(os.path.abspath('../examples/iris.csv'))
+        script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+        file_path = os.path.join(script_dir, '../examples/iris.csv')  # Construct the path to the iris.csv file
+        dataset.send_keys(file_path)
         submit = driver.find_element(By.ID, 'submit')
         #submit.click()
         driver.execute_script("arguments[0].click();", submit)
@@ -559,7 +571,10 @@ class TestApp(unittest.TestCase):
         # form with a file input with id 'dataset' and a submit button with id 'submit'
         dataset = driver.find_element(By.ID, 'dataset')
         # attach the file at "../examples/iris.csv" use os.path.abspath to get the full path
-        dataset.send_keys(os.path.abspath('../examples/iris.csv'))
+        #dataset.send_keys(os.path.abspath('../examples/iris.csv'))
+        script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+        file_path = os.path.join(script_dir, '../examples/iris.csv')  # Construct the path to the iris.csv file
+        dataset.send_keys(file_path)
         submit = driver.find_element(By.ID, 'submit')
         #submit.click()
         driver.execute_script("arguments[0].click();", submit)
