@@ -6,6 +6,8 @@ from utils import build_system, load_dataset, authenticate_user
 from flask_login import login_user, login_required, logout_user, current_user
 import pandas as pd
 import numpy as np
+import os
+import warnings
 import matplotlib.pyplot as plt
 from sdv.lite import SingleTablePreset
 from sdv.metadata import SingleTableMetadata
@@ -13,7 +15,6 @@ from sdv.single_table import GaussianCopulaSynthesizer, CTGANSynthesizer, Copula
 from sdmetrics.reports.single_table import QualityReport
 from sdmetrics.visualization import get_column_plot
 import config as C
-
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -71,6 +72,7 @@ def generate():
 @login_required
 def generate_id(id):
     if request.method == 'POST':
+        warnings.simplefilter(action='ignore', category=FutureWarning)
         if int(request.form['rows_' + str(id)]) <= 0 or int(request.form['epochs_' + str(id)]) <= 0:
             return render_template('error.html', user=current_user, error='The number of rows and epochs must be greater than 0')
 
@@ -190,7 +192,7 @@ def generate_id(id):
         else:
             return render_template('error.html', user=current_user, error='Invalid synthetizer')
 
-        synthetic_data.to_csv(C.SYNTHETIC_PATH + str(id) + '_s_' + dataset.name, index=False)
+        synthetic_data.to_csv(os.path.join(app.root_path,C.SYNTHETIC_PATH + str(id) + '_s_' + dataset.name), index=False)
         return render_template('showdata.html', id=id, user=current_user ,file_name=dataset.name, real_data=real_data, synthetic_data=synthetic_data, C_SYNTHETIC_PATH=C.SYNTHETIC_PATH, C_PLOT_PATH=C.PLOT_PATH)
     else:
         return redirect(url_for('generate'))
@@ -200,6 +202,8 @@ def generate_id(id):
 @login_required
 def upload():
     if request.method == 'POST':
+        #print the actual path of routes.py
+        print(app.root_path)
         if 'dataset' not in request.files:
             return render_template('error.html', user=current_user, error='No selected file.')
 
@@ -220,8 +224,10 @@ def upload():
         else:
             id = 1
 
-        file.save(C.DATASET_PATH + str(id) + '_' + file.filename)
-        dataset = Dataset(id=id, name=file.filename, path=C.DATASET_PATH + str(id) + '_' + file.filename, user_id=current_user.id)
+        #file.save(C.DATASET_PATH + str(id) + '_' + file.filename)
+        #file save using app.root_path
+        file.save(os.path.join(app.root_path, C.DATASET_PATH + str(id) + '_' + file.filename))
+        dataset = Dataset(id=id, name=file.filename, path=os.path.join(app.root_path, C.DATASET_PATH + str(id) + '_' + file.filename), user_id=current_user.id)
         db.session.add(dataset)
         db.session.commit()
 
@@ -251,7 +257,7 @@ def evaluate(id):
         return redirect(url_for('generate'))
 
     real_data = pd.read_csv(dataset.path)
-    synthetic_data = pd.read_csv(C.SYNTHETIC_PATH + str(id) + '_s_' + dataset.name)
+    synthetic_data = pd.read_csv(os.path.join(app.root_path,C.SYNTHETIC_PATH + str(id) + '_s_' + dataset.name))
     metadata = SingleTableMetadata()
     metadata.detect_from_dataframe(real_data)
 
@@ -259,15 +265,15 @@ def evaluate(id):
     report.generate(real_data, synthetic_data,metadata.to_dict())
 
     column_fig = report.get_visualization(property_name='Column Shapes')
-    column_fig.write_image(C.PLOT_PATH + str(id) + 'column_shapes.png')
+    column_fig.write_image(os.path.join(app.root_path,C.PLOT_PATH + str(id) + 'column_shapes.png'))
 
     pair_fig = report.get_visualization(property_name='Column Pair Trends')
-    pair_fig.write_image(C.PLOT_PATH + str(id) + 'column_pair_trends.png')
+    pair_fig.write_image(os.path.join(app.root_path, C.PLOT_PATH + str(id) + 'column_pair_trends.png'))
 
 
     for column in real_data.columns:
         plot = get_column_plot(real_data, synthetic_data, column)
-        plot.write_image(C.PLOT_PATH + str(id) + column + '.png')
+        plot.write_image(os.path.join(app.root_path,C.PLOT_PATH + str(id) + column + '.png'))
 
     num_columns = len(real_data.columns) # Número de columnas en el dataset
     column_pairs = [(real_data.columns[i], real_data.columns[j]) # Pares de columnas para obtener la covarianza
@@ -284,7 +290,7 @@ def evaluate(id):
         plt.xlabel(column1)
         plt.ylabel(column2)
         plt.legend()
-        plt.savefig(C.PLOT_PATH + str(id) + column1 + column2 + '.png')
+        plt.savefig(os.path.join(app.root_path, C.PLOT_PATH + str(id) + column1 + column2 + '.png'))
         plt.close()
 
     #plots with regression line
@@ -299,7 +305,7 @@ def evaluate(id):
         plt.xlabel(column1)
         plt.ylabel(column2)
         plt.legend()
-        plt.savefig(C.PLOT_PATH + str(id) + column1 + column2 + 'reg' + '.png')
+        plt.savefig(os.path.join(app.root_path,C.PLOT_PATH + str(id) + column1 + column2 + 'reg' + '.png'))
         plt.close()
 
     return render_template('evaluate.html',user=current_user,file_name=dataset.name,id=id,score=report.get_score(),real_data=real_data,synthetic_data=synthetic_data, column_pairs=column_pairs, C_PLOT_PATH=C.PLOT_PATH, C_SYNTHETIC_PATH=C.SYNTHETIC_PATH)
