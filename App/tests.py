@@ -127,6 +127,29 @@ class TestApp(unittest.TestCase):
         overall_score = report.get_score()
         self.assertGreaterEqual(overall_score, 0.7)
 
+    def test_unit_5_correct_file(self):
+        from utils import build_system, has_header, separate_with_comma
+
+        build_system()
+
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(script_dir)
+        examples_dir = os.path.join(root_dir, 'examples')
+
+        #we need to check if the file has a header and if it is separated by commas Rememmber that they recieve a FileStorage
+        with open(os.path.join(examples_dir, 'iris.csv'), 'rb') as file:
+            self.assertTrue(has_header(file))
+            self.assertTrue(separate_with_comma(file))
+
+        with open(os.path.join(examples_dir, 'iris_no_header.csv'), 'rb') as file:
+            self.assertFalse(has_header(file))
+            self.assertTrue(separate_with_comma(file))
+
+        with open(os.path.join(examples_dir, 'iris_semicolon.csv'), 'rb') as file:
+            self.assertTrue(has_header(file))
+            self.assertFalse(separate_with_comma(file))
+
+
 
 
     def test_func_1_home_page(self):

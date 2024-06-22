@@ -91,11 +91,11 @@
     document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("GenButton_{{dataset.id}}").addEventListener("click", function() {
             //if the rows are less than 1 or epochs are less than 1, dont show
-            if(document.getElementById("rows_{{dataset.id}}").value < 1){
+            if(document.getElementById("rows_{{dataset.id}}").value < 1 || document.getElementById("epochs_{{dataset.id}}").value < 1){
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'The number of rows must be greater than 0',
+                    text: 'The number of rows must be greater than 0 and the number of epochs must be greater than 0.',
                 });
                 return false;
             }

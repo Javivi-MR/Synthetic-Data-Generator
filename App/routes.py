@@ -2,7 +2,7 @@ from flask import render_template, url_for, request, redirect
 from app import app, db
 from models import User, Dataset
 from forms import Register, Login
-from utils import build_system, load_dataset, authenticate_user
+from utils import build_system, load_dataset, authenticate_user, has_header, separate_with_comma
 from flask_login import login_user, login_required, logout_user, current_user
 import pandas as pd
 import numpy as np
@@ -204,8 +204,6 @@ def generate_id(id):
 @login_required
 def upload():
     if request.method == 'POST':
-        #print the actual path of routes.py
-        print(app.root_path)
         if 'dataset' not in request.files:
             return render_template('error.html', user=current_user, error='No selected file.')
 
@@ -216,6 +214,18 @@ def upload():
 
         if file.filename.split('.')[-1] != 'csv':
             return render_template('error.html', user=current_user, error='The file must be a csv file.')
+
+        #check if the csv uploaded has headers
+        if not has_header(file):
+            return render_template('error.html', user=current_user, error='The file must have headers.')
+
+        if not separate_with_comma(file):
+            return render_template('error.html', user=current_user, error='The file must be separated by commas.')
+
+        header_line = file.readline().decode('utf-8').strip()
+        if not all(c.isalnum() or c == '.' or c == ':' or c == ',' or c == '_' for c in header_line):
+            return render_template('error.html', user=current_user,
+                                   error='The headers must not contain special characters.')
 
 
         last_dataset = db.session.query(Dataset).order_by(Dataset.id.desc()).first()
@@ -258,7 +268,6 @@ def evaluate(id):
     from utils import get_regression_line
     #check if the dataset exists and if it belongs to the user
 
-
     dataset = load_dataset(id)
     if dataset is None or dataset.user_id != current_user.id or not os.path.exists(dataset.path) or not os.path.exists(os.path.join(app.root_path,C.SYNTHETIC_PATH + str(id) + '_s_' + dataset.name)):
         return redirect(url_for('generate'))
@@ -276,7 +285,6 @@ def evaluate(id):
 
     pair_fig = report.get_visualization(property_name='Column Pair Trends')
     pair_fig.write_image(os.path.join(app.root_path, C.PLOT_PATH + str(id) + 'column_pair_trends.png'))
-
 
     for column in real_data.columns:
         plot = get_column_plot(real_data, synthetic_data, column)
