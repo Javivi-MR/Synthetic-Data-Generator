@@ -79,6 +79,8 @@ def generate_id(id):
         yes_no_parser = {'Yes': True, 'No': False}
 
         dataset = load_dataset(id)
+        if dataset is None or dataset.user_id != current_user.id or not os.path.exists(dataset.path):
+            return redirect(url_for('generate'))
         real_data = pd.read_csv(dataset.path)
 
         v_metadata = SingleTableMetadata()
@@ -224,8 +226,7 @@ def upload():
         else:
             id = 1
 
-        #file.save(C.DATASET_PATH + str(id) + '_' + file.filename)
-        #file save using app.root_path
+
         file.save(os.path.join(app.root_path, C.DATASET_PATH + str(id) + '_' + file.filename))
         dataset = Dataset(id=id, name=file.filename, path=os.path.join(app.root_path, C.DATASET_PATH + str(id) + '_' + file.filename), user_id=current_user.id)
         db.session.add(dataset)
@@ -241,8 +242,12 @@ def upload():
 def delete(id):
     if request.method == 'POST':
         dataset = load_dataset(id)
+        if dataset is None or dataset.user_id != current_user.id:
+            return redirect(url_for('generate'))
         db.session.delete(dataset)
         db.session.commit()
+
+        os.remove(dataset.path)
         return redirect(url_for('generate'))
     else:
         return redirect(url_for('generate'))
@@ -252,8 +257,10 @@ def delete(id):
 def evaluate(id):
     from utils import get_regression_line
     #check if the dataset exists and if it belongs to the user
+
+
     dataset = load_dataset(id)
-    if dataset is None or dataset.user_id != current_user.id:
+    if dataset is None or dataset.user_id != current_user.id or not os.path.exists(dataset.path) or not os.path.exists(os.path.join(app.root_path,C.SYNTHETIC_PATH + str(id) + '_s_' + dataset.name)):
         return redirect(url_for('generate'))
 
     real_data = pd.read_csv(dataset.path)

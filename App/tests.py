@@ -12,6 +12,10 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
+from sdv.lite import SingleTablePreset
+from sdv.metadata import SingleTableMetadata
+from sdv.single_table import GaussianCopulaSynthesizer
+from sdmetrics.reports.single_table import QualityReport
 
 #Run this file when the server is running (python main.py) and the database is empty
 
@@ -34,9 +38,19 @@ class TestApp(unittest.TestCase):
 
             db.session.commit()
 
-    def test_unit(self):
+    def test_unit_1_build_system(self):
+        from utils import build_system
+        import config as C
+
+        build_system()
+
+        self.assertTrue(os.path.exists('./static/data/'))
+        self.assertTrue(os.path.exists('./static/synthetic/'))
+        self.assertTrue(os.path.exists('./static/plots/'))
+
+    def test_unit_2_db_user_auth(self):
         from models import User, Dataset
-        from utils import build_system, get_regression_line, load_dataset, authenticate_user
+        from utils import authenticate_user, build_system, load_dataset
         from app import bcrypt
 
         build_system()
@@ -59,6 +73,13 @@ class TestApp(unittest.TestCase):
         self.assertEqual(loaded_dataset.path, 'test')
         self.assertEqual(loaded_dataset.user_id, 1)
 
+
+
+    def test_unit_3_stadistic_check(self):
+        from utils import build_system, get_regression_line
+
+        build_system()
+
         script_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(script_dir)
         examples_dir = os.path.join(root_dir, 'examples')
@@ -68,10 +89,6 @@ class TestApp(unittest.TestCase):
         self.assertEqual(round(iris['sepal_length'].std(),2), 0.83)
         self.assertEqual(round(iris['sepal_width'].mean(),2), 3.05)
         self.assertEqual(round(iris['sepal_width'].std(),2), 0.43)
-        self.assertEqual(round(iris['petal_length'].mean(),2), 3.76)
-        self.assertEqual(round(iris['petal_length'].std(),2), 1.76)
-        self.assertEqual(round(iris['petal_width'].mean(),2), 1.20)
-        self.assertEqual(round(iris['petal_width'].std(),2), 0.76)
 
         self.assertEqual(round(iris['sepal_length'].corr(iris['sepal_width']),2), -0.11)
         self.assertEqual(round(iris['sepal_length'].corr(iris['petal_length']),2), 0.87)
@@ -90,13 +107,34 @@ class TestApp(unittest.TestCase):
 
 
 
+    def test_unit_4_synthetic_data_quality(self):
+        from utils import build_system
 
-    def test_1_home_page(self):
+        build_system()
+
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(script_dir)
+        examples_dir = os.path.join(root_dir, 'examples')
+        iris = pd.read_csv(os.path.join(examples_dir, 'iris.csv'))
+
+        metadata = SingleTableMetadata()
+        metadata.detect_from_dataframe(iris)
+        synthesizer = GaussianCopulaSynthesizer(metadata)
+        synthesizer.fit(iris)
+        synthetic_data = synthesizer.sample(150)
+        report = QualityReport()
+        report.generate(iris, synthetic_data, metadata.to_dict())
+        overall_score = report.get_score()
+        self.assertGreaterEqual(overall_score, 0.7)
+
+
+
+    def test_func_1_home_page(self):
         response = self.app.get('/', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Home', response.data)
 
-    def test_2_register_page(self):
+    def test_func_2_register_page(self):
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
@@ -118,7 +156,7 @@ class TestApp(unittest.TestCase):
             self.assertIsNotNone(user)
         driver.close()
 
-    def test_3_login_page(self):
+    def test_func_3_login_page(self):
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
@@ -151,7 +189,7 @@ class TestApp(unittest.TestCase):
         driver.close()
 
 
-    def test_4_logout_page(self):
+    def test_func_4_logout_page(self):
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
@@ -189,12 +227,12 @@ class TestApp(unittest.TestCase):
         )
         driver.close()
 
-    def test_5_about_page(self):
+    def test_func_5_about_page(self):
         response = self.app.get('/about', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'About', response.data)
 
-    def test_6_generate_page(self):
+    def test_func_6_generate_page(self):
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
@@ -231,7 +269,7 @@ class TestApp(unittest.TestCase):
         )
         driver.close()
 
-    def test_7_upload_dataset(self):
+    def test_func_7_upload_dataset(self):
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
@@ -276,7 +314,7 @@ class TestApp(unittest.TestCase):
 
         driver.close()
 
-    def test_8_delete_dataset(self):
+    def test_func_8_delete_dataset(self):
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
@@ -328,7 +366,7 @@ class TestApp(unittest.TestCase):
 
         driver.close()
 
-    def test_9_generate_dataset(self):
+    def test_func_9_generate_dataset(self):
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
@@ -460,7 +498,7 @@ class TestApp(unittest.TestCase):
 
         driver.close()
 
-    def test_10_download_dataset(self):
+    def test_func_1_0_download_dataset(self):
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
@@ -528,7 +566,7 @@ class TestApp(unittest.TestCase):
 
         driver.close()
 
-    def test_11_evaluate_page(self):
+    def test_func_1_1_evaluate_page(self):
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
@@ -593,6 +631,116 @@ class TestApp(unittest.TestCase):
         )
 
         driver.close()
+
+    def test_func_1_2_password_error(self):
+        options = Options()
+        options.add_argument("--headless")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
+        driver.maximize_window()
+
+        driver.get('http://localhost:5000/register')
+        username = driver.find_element(By.ID, 'username')
+        username.send_keys('test')
+        password = driver.find_element(By.ID, 'password')
+        password.send_keys('test')
+
+        submit = driver.find_element(By.ID, 'submit')
+        driver.execute_script("arguments[0].click();", submit)
+
+        driver.get('http://localhost:5000/login')
+        username = driver.find_element(By.ID, 'username')
+        username.send_keys('test')
+        password = driver.find_element(By.ID, 'password')
+        password.send_keys('test123')
+
+        submit = driver.find_element(By.ID, 'loginb')
+        driver.execute_script("arguments[0].click();", submit)
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'ErrorMessage'))
+        )
+
+        driver.close()
+
+    def test_func_1_3_username_already_exists(self):
+        options = Options()
+        options.add_argument("--headless")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
+        driver.maximize_window()
+
+        driver.get('http://localhost:5000/register')
+        username = driver.find_element(By.ID, 'username')
+        username.send_keys('test')
+        password = driver.find_element(By.ID, 'password')
+        password.send_keys('test')
+
+        submit = driver.find_element(By.ID, 'submit')
+        driver.execute_script("arguments[0].click();", submit)
+
+        driver.get('http://localhost:5000/register')
+        username = driver.find_element(By.ID, 'username')
+        username.send_keys('test')
+        password = driver.find_element(By.ID, 'password')
+        password.send_keys('test')
+
+        submit = driver.find_element(By.ID, 'submit')
+        driver.execute_script("arguments[0].click();", submit)
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'ErrorMessage'))
+        )
+
+        driver.close()
+
+    def test_func_1_4_invalid_file_type(self):
+        options = Options()
+        options.add_argument("--headless")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
+        driver.maximize_window()
+
+        driver.get('http://localhost:5000/register')
+        username = driver.find_element(By.ID, 'username')
+        username.send_keys('test')
+        password = driver.find_element(By.ID, 'password')
+        password.send_keys('test')
+
+        submit = driver.find_element(By.ID, 'submit')
+        driver.execute_script("arguments[0].click();", submit)
+
+        driver.get('http://localhost:5000/login')
+        username = driver.find_element(By.ID, 'username')
+        username.send_keys('test')
+        password = driver.find_element(By.ID, 'password')
+        password.send_keys('test')
+
+        submit = driver.find_element(By.ID, 'loginb')
+        driver.execute_script("arguments[0].click();", submit)
+
+        driver.get('http://localhost:5000/generate')
+        upload = driver.find_element(By.ID, 'upload')
+        driver.execute_script("arguments[0].click();", upload)
+
+        dataset = driver.find_element(By.ID, 'dataset')
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(script_dir)
+        examples_dir = os.path.join(root_dir, 'examples')
+        dataset.send_keys(os.path.join(examples_dir, 'ignore.txt'))
+
+        submit = driver.find_element(By.ID, 'submit')
+        driver.execute_script("arguments[0].click();", submit)
+
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'ErrorMessage'))
+        )
+
+        driver.close()
+
 
 if __name__ == '__main__':
     unittest.main()

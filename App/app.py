@@ -29,5 +29,8 @@ with app.app_context():
     for dataset in datasets:
         if not User.query.get(dataset.user_id) or not os.path.exists(dataset.path):
             db.session.delete(dataset)
+            #delete the file
+            if os.path.exists(dataset.path):
+                os.remove(dataset.path)
     db.session.commit()
 
