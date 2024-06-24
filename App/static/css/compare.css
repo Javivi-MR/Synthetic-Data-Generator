@@ -10,3 +10,20 @@
   border-left: 1px solid #CCCCCC;
 }
 
+.ColumnComparison{
+  overflow-y: auto;
+  height: 20em;
+  overflow-x: hidden;
+}
+
+.CovarianceComparison{
+  overflow-y: auto;
+  height: 20em;
+  overflow-x: hidden;
+}
+
+.RegressionComparison{
+  overflow-y: auto;
+  height: 20em;
+  overflow-x: hidden;
+}

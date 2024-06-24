@@ -223,7 +223,7 @@ def upload():
             return render_template('error.html', user=current_user, error='The file must be separated by commas.')
 
         header_line = file.readline().decode('utf-8').strip()
-        if not all(c.isalnum() or c == '.' or c == ':' or c == ',' or c == '_' for c in header_line):
+        if not all(c.isalnum() or c == '.' or c == '-' or c == ':' or c == ',' or c == '_' for c in header_line):
             return render_template('error.html', user=current_user,
                                    error='The headers must not contain special characters.')
 

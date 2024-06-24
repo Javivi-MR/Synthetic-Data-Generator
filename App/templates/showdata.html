@@ -19,37 +19,41 @@
     <h6 style="margin-top: 1em">Bellow you can see the first five rows of each dataset</h6>
     <div class="OriginalData" style="margin-bottom: 1.3em">
         <h2>Original Data</h2>
-        <table>
-            <tr>
-                {% for column in real_data.columns %}
-                <th>{{ column }}</th>
+        <div class="scrollable-table">
+            <table>
+                <tr>
+                    {% for column in real_data.columns %}
+                    <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+                {% for row in real_data.head(5).values %}
+                <tr>
+                    {% for value in row %}
+                    <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
                 {% endfor %}
-            </tr>
-            {% for row in real_data.head(5).values %}
-            <tr>
-                {% for value in row %}
-                <td>{{ value }}</td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </table>
+            </table>
+        </div>
     </div>
     <div class="SyntheticData" id="SyntheticDataset" style="margin-bottom: 1.3em">
         <h2>Synthetic Data</h2>
-        <table>
-            <tr>
-                {% for column in synthetic_data.columns %}
-                <th>{{ column }}</th>
+        <div class="scrollable-table">
+            <table>
+                <tr>
+                    {% for column in synthetic_data.columns %}
+                    <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+                {% for row in synthetic_data.head(5).values %}
+                <tr>
+                    {% for value in row %}
+                    <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
                 {% endfor %}
-            </tr>
-            {% for row in synthetic_data.head(5).values %}
-            <tr>
-                {% for value in row %}
-                <td>{{ value }}</td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </table>
+            </table>
+        </div>
     </div>
 
     <a href="../{{C_SYNTHETIC_PATH + id}}_s_{{file_name}}" id="download_data" class="btn btn-outline-success" style="font-size: 1.4em;">Download synthetic data</a>
