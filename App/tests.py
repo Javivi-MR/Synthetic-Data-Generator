@@ -621,6 +621,7 @@ class TestApp(unittest.TestCase):
 
         dataset = driver.find_element(By.ID, 'dataset')
 
+        script_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(script_dir)
         examples_dir = os.path.join(root_dir, 'examples')
         dataset.send_keys(os.path.join(examples_dir, 'iris.csv'))
