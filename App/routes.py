@@ -227,6 +227,8 @@ def upload():
             return render_template('error.html', user=current_user,
                                    error='The headers must not contain special characters.')
 
+        file.seek(0)
+
 
         last_dataset = db.session.query(Dataset).order_by(Dataset.id.desc()).first()
 
