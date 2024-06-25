@@ -29,7 +29,7 @@ def login():
             login_user(user)
             return redirect(url_for('index'))
         return render_template('error.html', user=current_user, error='Invalid username or password')
-    return render_template('login.html', form=loginform, user=current_user)
+    return render_template('login.html', form=loginform, user=current_user, p='')
 
 @app.route('/forgot', methods=['POST', 'GET'])
 def forgot():
@@ -51,7 +51,7 @@ def register():
         user = User(username=registerform.username.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
-        return redirect(url_for('login'))
+        return render_template('login.html', user=current_user, form=Login() , p='User created successfully, now you can login.')
     elif registerform.errors:
         return render_template('error.html', user=current_user, error='Username already exists. Choose a different one.')
 
