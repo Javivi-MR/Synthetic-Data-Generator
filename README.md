@@ -47,7 +47,7 @@ source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
-7. Run the following command to start the Flask application:
+7. Navigate to the App directory and run the following command to start the Flask application:
 ```bash
 flask run
 ```
