@@ -5,6 +5,8 @@ from app import bcrypt
 import config as C
 import csv
 
+
+# Create the system directories
 def build_system():
     if not os.path.exists(C.DATASET_PATH):
         os.makedirs(C.DATASET_PATH)
@@ -13,19 +15,27 @@ def build_system():
     if not os.path.exists(C.PLOT_PATH):
         os.makedirs(C.PLOT_PATH)
 
+
+# Get the regression line of the dataset
 def get_regression_line(x, y):
     slope, intercept = np.polyfit(x, y, 1)
     return slope, intercept
 
+
+#  Return the dataset with the given id
 def load_dataset(dataset_id):
     return Dataset.query.get(int(dataset_id))
 
+
+# Return the user with the given id
 def authenticate_user(username, password):
     user = User.query.filter_by(username=username).first()
     if user and bcrypt.check_password_hash(user.password, password):
         return user
     return None
 
+
+# Check if the file has a header
 def has_header(file):
     # Check if the file is a FileStorage object (uploaded file)
     if hasattr(file, 'stream'):
@@ -41,12 +51,13 @@ def has_header(file):
     if hasattr(file, 'stream'):
         file.stream.seek(0)
 
-    # Use csv.Sniffer to check if the file has a header
     sniffer = csv.Sniffer()
     has_header = sniffer.has_header(sample)
 
     return has_header
 
+
+# Check if the file is separated by commas
 def separate_with_comma(file):
     # Check if the file is a FileStorage object (uploaded file)
     if hasattr(file, 'stream'):
@@ -62,10 +73,7 @@ def separate_with_comma(file):
     if hasattr(file, 'stream'):
         file.stream.seek(0)
 
-    # Use csv.Sniffer to check if the file has a header
     sniffer = csv.Sniffer()
-
-    # Use csv.Sniffer to check the delimiter
     dialect = sniffer.sniff(sample)
 
     return dialect.delimiter == ','

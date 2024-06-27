@@ -17,9 +17,11 @@ from sdv.metadata import SingleTableMetadata
 from sdv.single_table import GaussianCopulaSynthesizer
 from sdmetrics.reports.single_table import QualityReport
 
-#Run this file when the server is running (python main.py) and the database is empty
+
+# Run this file when the server is running (python main.py) and the database is empty
 
 class TestApp(unittest.TestCase):
+
     def setUp(self):
         self.app = app.test_client()
         self.app.testing = True
@@ -38,6 +40,7 @@ class TestApp(unittest.TestCase):
 
             db.session.commit()
 
+    # Unit test 1 - check if the system is correctly built
     def test_unit_1_build_system(self):
         from utils import build_system
         import config as C
@@ -48,6 +51,7 @@ class TestApp(unittest.TestCase):
         self.assertTrue(os.path.exists('./static/synthetic/'))
         self.assertTrue(os.path.exists('./static/plots/'))
 
+    # Unit test 2 - check if the user is correctly authenticated and the dataset is correctly loaded
     def test_unit_2_db_user_auth(self):
         from models import User, Dataset
         from utils import authenticate_user, build_system, load_dataset
@@ -73,8 +77,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(loaded_dataset.path, 'test')
         self.assertEqual(loaded_dataset.user_id, 1)
 
-
-
+    # Unit test 3 - check if the stadistics are correctly calculated
     def test_unit_3_stadistic_check(self):
         from utils import build_system, get_regression_line
 
@@ -85,28 +88,30 @@ class TestApp(unittest.TestCase):
         examples_dir = os.path.join(root_dir, 'examples')
         iris = pd.read_csv(os.path.join(examples_dir, 'iris.csv'))
 
-        self.assertEqual(round(iris['sepal_length'].mean(),2), 5.84)
-        self.assertEqual(round(iris['sepal_length'].std(),2), 0.83)
-        self.assertEqual(round(iris['sepal_width'].mean(),2), 3.05)
-        self.assertEqual(round(iris['sepal_width'].std(),2), 0.43)
+        self.assertEqual(round(iris['sepal_length'].mean(), 2), 5.84)
+        self.assertEqual(round(iris['sepal_length'].std(), 2), 0.83)
+        self.assertEqual(round(iris['sepal_width'].mean(), 2), 3.05)
+        self.assertEqual(round(iris['sepal_width'].std(), 2), 0.43)
 
-        self.assertEqual(round(iris['sepal_length'].corr(iris['sepal_width']),2), -0.11)
-        self.assertEqual(round(iris['sepal_length'].corr(iris['petal_length']),2), 0.87)
-        self.assertEqual(round(iris['sepal_length'].corr(iris['petal_width']),2), 0.82)
-        self.assertEqual(round(iris['sepal_width'].corr(iris['petal_length']),2), -0.42)
-        self.assertEqual(round(iris['sepal_width'].corr(iris['petal_width']),2), -0.36)
-        self.assertEqual(round(iris['petal_length'].corr(iris['petal_width']),2), 0.96)
+        self.assertEqual(round(iris['sepal_length'].corr(iris['sepal_width']), 2), -0.11)
+        self.assertEqual(round(iris['sepal_length'].corr(iris['petal_length']), 2), 0.87)
+        self.assertEqual(round(iris['sepal_length'].corr(iris['petal_width']), 2), 0.82)
+        self.assertEqual(round(iris['sepal_width'].corr(iris['petal_length']), 2), -0.42)
+        self.assertEqual(round(iris['sepal_width'].corr(iris['petal_width']), 2), -0.36)
+        self.assertEqual(round(iris['petal_length'].corr(iris['petal_width']), 2), 0.96)
 
-        self.assertEqual(round(iris['sepal_length'].cov(iris['sepal_width']),2), -0.04)
+        self.assertEqual(round(iris['sepal_length'].cov(iris['sepal_width']), 2), -0.04)
 
         x = iris['sepal_length']
         y = iris['sepal_width']
         slope, intercept = get_regression_line(x, y)
-        self.assertEqual(round((iris['sepal_width'].mean() - (iris['sepal_length'].cov(iris['sepal_width']) / (iris['sepal_length'].std()**2) * iris['sepal_length'].mean())),2), round(intercept,2))
-        self.assertEqual(round((iris['sepal_length'].cov(iris['sepal_width']) / iris['sepal_length'].std() ** 2),2), round(slope,2))
+        self.assertEqual(round((iris['sepal_width'].mean() - (
+                    iris['sepal_length'].cov(iris['sepal_width']) / (iris['sepal_length'].std() ** 2) * iris[
+                    'sepal_length'].mean())), 2), round(intercept, 2))
+        self.assertEqual(round((iris['sepal_length'].cov(iris['sepal_width']) / iris['sepal_length'].std() ** 2), 2),
+                         round(slope, 2))
 
-
-
+    # Unit test 4 - check if the synthetic data quality is good
     def test_unit_4_synthetic_data_quality(self):
         from utils import build_system
 
@@ -127,6 +132,7 @@ class TestApp(unittest.TestCase):
         overall_score = report.get_score()
         self.assertGreaterEqual(overall_score, 0.7)
 
+    # Unit test 5 - check if the file has a header and if it is separated by commas
     def test_unit_5_correct_file(self):
         from utils import build_system, has_header, separate_with_comma
 
@@ -136,7 +142,6 @@ class TestApp(unittest.TestCase):
         root_dir = os.path.dirname(script_dir)
         examples_dir = os.path.join(root_dir, 'examples')
 
-        #we need to check if the file has a header and if it is separated by commas Rememmber that they recieve a FileStorage
         with open(os.path.join(examples_dir, 'iris.csv'), 'rb') as file:
             self.assertTrue(has_header(file))
             self.assertTrue(separate_with_comma(file))
@@ -149,14 +154,13 @@ class TestApp(unittest.TestCase):
             self.assertTrue(has_header(file))
             self.assertFalse(separate_with_comma(file))
 
-
-
-
+    # Functional test 1 - check if the home page is correctly loaded
     def test_func_1_home_page(self):
         response = self.app.get('/', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Home', response.data)
 
+    # Functional test 2 - check if the register page is correctly loaded and if the user is correctly registered
     def test_func_2_register_page(self):
         options = Options()
         options.add_argument("--headless")
@@ -179,6 +183,7 @@ class TestApp(unittest.TestCase):
             self.assertIsNotNone(user)
         driver.close()
 
+    # Functional test 3 - check if the login page is correctly loaded and if the user is correctly logged in
     def test_func_3_login_page(self):
         options = Options()
         options.add_argument("--headless")
@@ -186,7 +191,6 @@ class TestApp(unittest.TestCase):
         options.add_argument("--disable-dev-shm-usage")
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
         driver.maximize_window()
-
 
         driver.get('http://localhost:5000/register')
         username = driver.find_element(By.ID, 'username')
@@ -211,7 +215,7 @@ class TestApp(unittest.TestCase):
         )
         driver.close()
 
-
+    # Functional test 4 - check if the logout page is correctly loaded and if the user is correctly logged out
     def test_func_4_logout_page(self):
         options = Options()
         options.add_argument("--headless")
@@ -250,11 +254,13 @@ class TestApp(unittest.TestCase):
         )
         driver.close()
 
+    # Functional test 5 - check if the about page is correctly loaded
     def test_func_5_about_page(self):
         response = self.app.get('/about', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'About', response.data)
 
+    # Functional test 6 - check if the generate page is correctly loaded
     def test_func_6_generate_page(self):
         options = Options()
         options.add_argument("--headless")
@@ -292,6 +298,7 @@ class TestApp(unittest.TestCase):
         )
         driver.close()
 
+    # Functional test 7 - check if the upload dataset page is correctly loaded and if the dataset is correctly uploaded
     def test_func_7_upload_dataset(self):
         options = Options()
         options.add_argument("--headless")
@@ -337,6 +344,7 @@ class TestApp(unittest.TestCase):
 
         driver.close()
 
+    # Functional test 8 - check if the dataset is correctly deleted
     def test_func_8_delete_dataset(self):
         options = Options()
         options.add_argument("--headless")
@@ -389,6 +397,7 @@ class TestApp(unittest.TestCase):
 
         driver.close()
 
+    # Functional test 9 - check if the synthetic dataset is correctly generated with all synthesizers
     def test_func_9_generate_dataset(self):
         options = Options()
         options.add_argument("--headless")
@@ -521,6 +530,7 @@ class TestApp(unittest.TestCase):
 
         driver.close()
 
+    # Functional test 10 - check if the synthetic dataset is correctly downloaded
     def test_func_1_0_download_dataset(self):
         options = Options()
         options.add_argument("--headless")
@@ -589,6 +599,7 @@ class TestApp(unittest.TestCase):
 
         driver.close()
 
+    # Functional test 11 - check if the synthetic dataset is correctly evaluated
     def test_func_1_1_evaluate_page(self):
         options = Options()
         options.add_argument("--headless")
@@ -656,6 +667,7 @@ class TestApp(unittest.TestCase):
 
         driver.close()
 
+    # Functional test 12 - check if the error messages are correctly displayed
     def test_func_1_2_password_error(self):
         options = Options()
         options.add_argument("--headless")
@@ -688,6 +700,7 @@ class TestApp(unittest.TestCase):
 
         driver.close()
 
+    # Functional test 13 - check if there cannot be two users with the same username
     def test_func_1_3_username_already_exists(self):
         options = Options()
         options.add_argument("--headless")
@@ -720,6 +733,7 @@ class TestApp(unittest.TestCase):
 
         driver.close()
 
+    # Functional test 14 - check if the error message is correctly displayed when the file type is invalid
     def test_func_1_4_invalid_file_type(self):
         options = Options()
         options.add_argument("--headless")
