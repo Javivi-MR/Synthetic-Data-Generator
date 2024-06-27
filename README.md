@@ -3,6 +3,7 @@ This repository contains the source code of my Bachelor's Degree Final Project, 
 
 # Table of Contents
 - [Introduction](#introduction)
+    - [Content](#content)
 - [Installation](#installation)
     - [Using Docker](#using-docker)
     - [Manually](#manually)
@@ -16,6 +17,31 @@ SDV (Synthetic Data Vault) is a Python library that provides a set of tools for 
 The library is designed to be easy to use and flexible, allowing users to apply different synthesis techniques to different columns of a dataset, and to combine these techniques in a single model.
 
 This repository contains a Flask application that implements SDV for generating synthetic datasets from a given CSV dataset.
+
+## Content
+- **App**: Contains the Flask application that implements SDV for generating synthetic datasets.
+    - **static**: Contains the static files and folders(CSS, plots, images, datasets) used in the application.
+    - **templates**: Contains the HTML templates used in the application.
+    - **instance**: Contains the database file used in the application.
+    - **app.py**: Contains the Flask application code.
+    - **config.py**: Contains the configuration settings for the application.
+    - **forms.py**: Contains the forms used in the application.
+    - **models.py**: Contains the database models used in the application.
+    - **routes.py**: Contains the route definitions for the application.
+    - **utils.py**: Contains utility functions used in the application.
+    - **tests.py**: Contains the tests for the application.
+    - **main.py**: Contains the main function to run the application.
+- **examples**: Contains example datasets that can be used to test the application.
+    - **iris.csv**: Contains the Iris dataset with some modifications.  
+    Fisher,R. A.. (1988). Iris. UCI Machine Learning Repository. https://doi.org/10.24432/C56C76.
+    - **adult.csv**: Contains the Adult dataset with some modifications.
+     Becker,Barry and Kohavi,Ronny. (1996). Adult. UCI Machine Learning Repository. https://doi.org/10.24432/C5XW20.
+- **Dockerfile**: Contains the Dockerfile used to build the Docker image for the application.
+- **docker-compose.yml**: Contains the Docker Compose file used to run the application in a Docker container.
+- **gunicorn.py**: Contains the Gunicorn configuration settings for the application.
+- **requirements.txt**: Contains the list of required packages for the application.
+- **README.md**: Contains the documentation for the application.
+- **LICENSE**: Contains the license information for the application.
 
 # Installation
 If you want to just test the application, without going through the installation process, a web version is available <a href="https://syntheticdatagen1.azurewebsites.net/">Here</a>. However, please note that this deployed version has limited resources. It is best suited for testing with smaller datasets, such as those with a few rows and columns. For example, the Iris dataset (5 columns and 150 rows) works well. This limitation ensures that the application remains responsive and accessible to all users. 
