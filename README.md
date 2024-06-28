@@ -42,6 +42,7 @@ This repository contains a Flask application that implements SDV for generating 
 - **requirements.txt**: Contains the list of required packages for the application.
 - **README.md**: Contains the documentation for the application.
 - **LICENSE**: Contains the license information for the application.
+- **TFG_documentation.pdf**: Contains the documentation for the Bachelor's Degree Final Project.
 
 # Installation
 If you want to just test the application, without going through the installation process, a web version is available <a href="https://syntheticdatagen1.azurewebsites.net/">Here</a>. However, please note that this deployed version has limited resources. It is best suited for testing with smaller datasets, such as those with a few rows and columns. For example, the Iris dataset (5 columns and 150 rows) works well. This limitation ensures that the application remains responsive and accessible to all users. 
